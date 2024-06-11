@@ -15,17 +15,40 @@
     {% endif %}
 
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+    <div class="container">
+
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" value="{{ last_username }}" class="form-control" aria-describedby="emailHelp" name="email" id="inputEmail" autocomplete="email" required autofocus>
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+    </div>
+
+    <hr>
+
+{#    <label for="inputEmail">Email</label>#}
+{#    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>#}
+{#    <label for="inputPassword">Password</label>#}
+
+{#    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>#}
 
     <input type="hidden" name="_csrf_token"
            value="{{ csrf_token('authenticate') }}"
     >
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
+{#    <button class="btn btn-lg btn-primary" type="submit">#}
+{#        Sign in#}
+{#    </button>#}
 </form>
 {% endblock %}
