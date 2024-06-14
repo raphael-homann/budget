@@ -6,7 +6,7 @@ export default () => createRouter({
         {
             path: '/',
             name: 'home',
-            component: () => import('../pages/Home'),
+            component: () => import('../pages/Home.vue'),
         },
     ],
 })

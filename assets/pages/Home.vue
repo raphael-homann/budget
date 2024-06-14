@@ -1,8 +1,11 @@
 <template id="Home">
   Hello world homepage
 </template>
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+const entityManager = new En
+const Home = defineComponent({
   data() {
     return {
     }
@@ -10,5 +13,6 @@ export default {
   },
   methods: {
   }
-}
+});
+export default Home;
 </script>

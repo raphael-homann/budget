@@ -4,7 +4,10 @@ export const fr = {
     $vuetify: {
         ...frCore
     },
-    fse: {
+    budget: {
+        app: {
+            title: 'Gestion de budget',
+        },
         menu: {
             daily: 'Quotidien',
             workflow: 'Flux de travail',

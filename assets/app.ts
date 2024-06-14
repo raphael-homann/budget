@@ -18,9 +18,9 @@ import {fr} from './snippets/fr'
 import {en} from './snippets/en'
 import {createI18n,useI18n} from "vue-i18n";
 import {createVueI18nAdapter} from "vuetify/locale/adapters/vue-i18n";
-const App = require("./App.vue").default;
 
-const createRouter = require("./plugins/router.ts").default;
+import App from './App.vue'
+import createRouter from "./plugins/router";
 
 const i18n = createI18n({
     legacy: false, // Vuetify does not support the legacy mode of vue-i18n
