@@ -26,6 +26,12 @@
             "migrations/.gitignore"
         ]
     },
+    "efrogg/synergy-bundle": {
+        "version": "0.0.1"
+    },
+    "efrogg/synergy-maker-bundle": {
+        "version": "0.0.1"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {
@@ -130,6 +136,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/mercure-bundle": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.3",
+            "ref": "d097c114aae82c5bc88d48ac164fe523f1003292"
+        },
+        "files": [
+            "config/packages/mercure.yaml"
+        ]
     },
     "symfony/messenger": {
         "version": "7.1",
@@ -274,6 +292,22 @@
         "files": [
             "config/packages/web_profiler.yaml",
             "config/routes/web_profiler.yaml"
+        ]
+    },
+    "symfony/webpack-encore-bundle": {
+        "version": "2.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "082d754b3bd54b3fc669f278f1eea955cfd23cf5"
+        },
+        "files": [
+            "assets/app.js",
+            "assets/styles/app.css",
+            "config/packages/webpack_encore.yaml",
+            "package.json",
+            "webpack.config.js"
         ]
     },
     "symfonycasts/verify-email-bundle": {
