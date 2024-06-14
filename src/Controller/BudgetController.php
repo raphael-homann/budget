@@ -9,8 +9,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/budget')]
 class BudgetController extends AbstractController
 {
-    #[Route('/', name: 'app_budget')]
-    public function index(): Response
+    #[Route('/{path}', name: 'app_budget' , requirements: ['path' => '.*'])]
+    public function index(string $path=''): Response
     {
         return $this->render('budget/index.html.twig', [
             'controller_name' => 'BudgetController',

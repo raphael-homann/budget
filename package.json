@@ -37,7 +37,7 @@
     "dependencies": {
         "@tinymce/tinymce-vue": "^5.1.1",
         "debounce": "^2.0.0",
-        "@efrogg/synergy-ts": "./custom/npm-src/SynergyTS-npm",
+        "@efrogg/synergy": "./custom/npm-src/SynergyTS-npm",
         "tinymce": "^7.0.1",
         "vue-router": "^4.2.5",
         "vuetify": "^3.4.10"

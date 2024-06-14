@@ -6,15 +6,13 @@ use App\Repository\BudgetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Efrogg\Synergy\Entity\AbstractSynergyEntity;
+use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
-class Budget
+#[SynergyEntity(name: 'budget', description: 'Budget entity')]
+class Budget extends AbstractSynergyEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
@@ -41,11 +39,6 @@ class Budget
         $this->envelopes = new ArrayCollection();
         $this->user = new ArrayCollection();
         $this->categories = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string
