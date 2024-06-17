@@ -14,16 +14,23 @@ export const fr = {
             todos: 'Tâches',
         },
         entities: {
-            Todo: {
-                listing: {
-                    add: 'Ajouter une tâche',
-                    edit: 'Modifier une tâche',
+            Budget:{
+                listing:{
+                    edit: 'Editer budget',
+                    add: 'Ajouter budget',
                 },
-                fields: {
-                    title: 'Titre',
-                    finished: 'Fait',
-                    count: 'nombre',
-                    user: 'Utilisateur',
+                fields:{
+                    name: 'Nom',
+                    description: 'Description',
+                }
+            },
+            Envelope:{
+                listing:{
+                    add: 'Ajouter enveloppe',
+                    edit: 'Editer enveloppe',
+                },
+                fields:{
+                    name: 'Nom',
                     description: 'Description',
                 }
             }

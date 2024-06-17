@@ -14,5 +14,17 @@ export const en = {
             workflow: 'Workflow',
             todos: 'Todos',
         },
+        entities: {
+            Budget:{
+                listing:{
+                    edit: 'Edit budget',
+                    add: 'Add budget',
+                },
+                fields:{
+                    name: 'Name',
+                    description: 'Description',
+                }
+            }
+        }
     },
 }

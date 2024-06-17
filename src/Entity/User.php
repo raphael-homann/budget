@@ -6,20 +6,24 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Efrogg\Synergy\Entity\SynergyEntityInterface;
+use Efrogg\Synergy\Entity\SynergyEntityTrait;
+use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
+use Efrogg\Synergy\Mapping\SynergyEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+#[SynergyEntity]
+class User implements UserInterface, PasswordAuthenticatedUserInterface, SynergyEntityInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use SynergyEntityTrait;
+    use SynergyNumericIdEntityTrait;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
@@ -34,9 +38,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Ignore]
     private ?string $password = null;
 
     #[ORM\Column]
+    #[Ignore]
     private bool $isVerified = false;
 
     /**
@@ -50,10 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->budgets = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getEmail(): ?string
     {
@@ -72,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @see UserInterface
      */
+    #[Ignore]
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -124,6 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    #[Ignore]
     public function isVerified(): bool
     {
         return $this->isVerified;

@@ -1,4 +1,9 @@
 synergy:
-    twitter:
-        client_id: 123
-        client_secret: 'YOUR'
+#    maker:
+#        bundleName: '@@efrogg/synergy'
+#        snippetPrefix: 'budget'
+
+synergy_maker:
+    bundleName: '@efrogg/synergy'
+    snippetPrefix: 'budget'
+    editFormPrefix: 'Bg'

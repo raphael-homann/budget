@@ -7,12 +7,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Efrogg\Synergy\Entity\AbstractSynergyEntity;
+use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
 use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[SynergyEntity(name: 'budget', description: 'Budget entity')]
 class Budget extends AbstractSynergyEntity
 {
+    use SynergyNumericIdEntityTrait;
+
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
@@ -23,10 +26,11 @@ class Budget extends AbstractSynergyEntity
     private Collection $envelopes;
 
     /**
+     * eager fetch in order to be able to find the user on deletion (for mercure event)
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'budgets')]
-    private Collection $user;
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'budgets', fetch: 'EAGER')]
+    private Collection $users;
 
     /**
      * @var Collection<int, Category>
@@ -34,10 +38,13 @@ class Budget extends AbstractSynergyEntity
     #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'budget', orphanRemoval: true)]
     private Collection $categories;
 
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->envelopes = new ArrayCollection();
-        $this->user = new ArrayCollection();
+        $this->users = new ArrayCollection();
         $this->categories = new ArrayCollection();
     }
 
@@ -86,15 +93,15 @@ class Budget extends AbstractSynergyEntity
     /**
      * @return Collection<int, User>
      */
-    public function getUser(): Collection
+    public function getUsers(): Collection
     {
-        return $this->user;
+        return $this->users;
     }
 
     public function addUser(User $user): static
     {
-        if (!$this->user->contains($user)) {
-            $this->user->add($user);
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
         }
 
         return $this;
@@ -102,7 +109,7 @@ class Budget extends AbstractSynergyEntity
 
     public function removeUser(User $user): static
     {
-        $this->user->removeElement($user);
+        $this->users->removeElement($user);
 
         return $this;
     }
@@ -133,6 +140,18 @@ class Budget extends AbstractSynergyEntity
                 $category->setBudget(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

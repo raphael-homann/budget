@@ -6,16 +6,19 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="App\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/custom/composer-src/SynergyTS-bundle/src" isTestSource="false" packagePrefix="Efrogg\Synergy\" />
       <sourceFolder url="file://$MODULE_DIR$/custom/composer-src/SynergyTS-maker-bundle/src" isTestSource="false" packagePrefix="Efrogg\SynergyMaker\" />
-      <excludeFolder url="file://$MODULE_DIR$/custom/npm-src/SynergyTS-npm" />
+      <sourceFolder url="file://$MODULE_DIR$/custom/npm-src/SynergyTS-npm" isTestSource="false" packagePrefix="@efrogg/synergy" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/efrogg/synergy-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/efrogg/synergy-maker-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lcobucci/jwt" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/mercure" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/mercure-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/webpack-encore-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules" />
     </content>
+    <content url="file://$MODULE_DIR$/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="@mdi/font" level="application" />
   </component>
 </module>

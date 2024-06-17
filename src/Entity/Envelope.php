@@ -6,20 +6,23 @@ use App\Repository\EnvelopeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Efrogg\Synergy\Entity\AbstractSynergyEntity;
+use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
+use Efrogg\Synergy\Mapping\SynergyEntity;
+use Efrogg\Synergy\Mapping\SynergyFormField;
 
 #[ORM\Entity(repositoryClass: EnvelopeRepository::class)]
-class Envelope
+#[SynergyEntity]
+class Envelope extends AbstractSynergyEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use SynergyNumericIdEntityTrait;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'envelopes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[SynergyFormField(ignore: true)]
     private ?Budget $budget = null;
 
     /**
@@ -31,11 +34,6 @@ class Envelope
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

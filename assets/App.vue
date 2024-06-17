@@ -29,6 +29,9 @@
 import {useLocale} from "vuetify";
 import {defineComponent} from 'vue'
 
+import Budget from "./Data/Entity/Budget";
+import {store} from "./service/store";
+
 const App = defineComponent({
   name: "App",
   data(){
@@ -59,8 +62,27 @@ const App = defineComponent({
     selectLanguage(locale: any) {
       this.$vuetify.locale.current = locale.id
     },
+    loadData() {
+      store.entityManager.load('/budget-data/full').then((data: any) => {
+        console.log(store.entityManager.getRepository(Budget).getItems().map((item: Budget) => item.name));
+      });
+    },
+    mount() {
+      store.appData = window.appData
+      this.loadData();
+    },
+    unmount() {
+    },
   },
   watch: {
+  },
+
+  mounted() {
+    this.unmount();
+    this.mount();
+  },
+  unmounted() {
+    this.unmount();
   },
 
 });

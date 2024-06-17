@@ -2,6 +2,15 @@
 
 {% block title %}Hello BudgetController!{% endblock %}
 
+{% block javascripts_header %}
+    <script>
+        window.appData = {
+            userId: {{ app.user.id }}
+        }
+    </script>
+    {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <div id="app"></div>
 {% endblock %}
