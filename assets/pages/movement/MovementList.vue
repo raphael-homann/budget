@@ -1,23 +1,23 @@
 <template>
-  <h1>edit envelopes (budget : {{ budget?.name }} {{ budget?.id }}</h1>
+  <h1>edit movements (budget : {{ budget?.name }} {{ budget?.id }})</h1>
   <v-container>
 
-    <v-dialog :model-value="envelopeModal" max-width="500">
-      <bg-envelope-edit-form :entity-manager="entityManager" :envelope="envelopeModal" @close="envelopeModal=null"
-                             @save="envelopeModal=null"></bg-envelope-edit-form>
+    <v-dialog :model-value="movementModal" max-width="500">
+      <bg-movement-edit-form :entity-manager="entityManager" :movement="movementModal" @close="movementModal=null"
+                             @save="movementModal=null"></bg-movement-edit-form>
     </v-dialog>
 
     <v-btn @click="create" color="primary">Ajouter</v-btn>
 
     <v-data-table
         :headers="headers"
-        :items="envelopes"
+        :items="movements"
         :items-per-page="25"
         class="elevation-1"
     >
       <template v-slot:item.actions="{ item }">
-        <v-icon @click="envelopeModal=item.clone()">mdi-pencil</v-icon>
-        <v-icon @click="deleteEnvelope(item)">mdi-delete</v-icon>
+        <v-icon @click="movementModal=item.clone()">mdi-pencil</v-icon>
+        <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
   </v-container>
@@ -27,8 +27,8 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import {store} from "../../service/store";
-import Envelope from "../../Data/Entity/Envelope";
-import BgEnvelopeEditForm from "../../Data/Form/BgEnvelopeEditForm.vue";
+import Movement from "../../Data/Entity/Movement";
+import BgMovementEditForm from "../../Data/Form/BgMovementEditForm.vue";
 import EntityManager from "@efrogg/synergy/Data/EntityManager";
 import ListChangedEvent from "@efrogg/synergy/Data/Event/ListChangedEvent";
 import Budget from "../../Data/Entity/Budget";
@@ -39,14 +39,14 @@ import EntityChangedEvent from "../../../custom/npm-src/SynergyTS-npm/Data/Event
 import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEvent";
 
 const entityManager: EntityManager = store.entityManager;
-const envelopeRepository = entityManager.getRepository(Envelope);
+const movementRepository = entityManager.getRepository(Movement);
 const budgetRepository = entityManager.getRepository(Budget);
 
-const EnvelopeList = defineComponent({
-  components: {BgEnvelopeEditForm},
+const MovementList = defineComponent({
+  components: {BgMovementEditForm},
   data(): {
-    envelopes: Envelope[],
-    envelopeModal: null | Envelope,
+    movements: Movement[],
+    movementModal: null | Movement,
     entityManager: EntityManager,
     budgetId: null | number,
     budget: null | Budget,
@@ -54,33 +54,36 @@ const EnvelopeList = defineComponent({
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
-      envelopes: [],
-      envelopeModal: null,
+      movements: [],
+      movementModal: null,
       entityManager: entityManager,
       budgetId: null,
       budget: null,
       headers: [
-        {title: 'Name', value: 'name'},
-        {title: 'Actions', value: 'actions', sortable: false}
+        {title: 'Amount', value: 'amount'},
+        {title: 'Commentaire', value: 'comment'},
+        {title: 'Catégorie', value: 'category.name', sortable: false},
+        {title: 'Enveloppe', value: 'category.envelope.name', sortable: false},
+        {title: 'Actions', value: 'actions', sortable: false},
       ]
     }
   }, computed: {},
   methods: {
-    initEnvelopes() {
-      console.log('initEnvelopes', this.budgetId)
+    initMovements() {
+      console.log('initMovements', this.budgetId)
       if (this.budgetId) {
         let criteria = new Criteria();
         criteria
             .addFilter(new EqualsFilter('budget.id', this.budgetId))
             .addSort(new FieldSort('name', 'asc'))
-        // .addSort(new CustomSort((a: Envelope, b:Envelope) => {
+        // .addSort(new CustomSort((a: Movement, b:Movement) => {
         //   return a.name.localeCompare(b.name)
         // }))
         ;
         // criteria.addFilter(new CustomFilter('budget.id', (id: any) => id === this.budgetId));                          // works
-        this.envelopes = envelopeRepository.search(criteria).getItems();                // works too
-        // this.envelopes = envelopeRepository.findItemsBy({'budget.id': new EqualsFilter('budget.id',this.budgetId)}).getItems(); // works
-        // this.envelopes = envelopeRepository.findItemsBy({'budget.id': this.budgetId}).getItems(); // works again
+        this.movements = movementRepository.search(criteria).getItems();                // works too
+        // this.movements = movementRepository.findItemsBy({'budget.id': new EqualsFilter('budget.id',this.budgetId)}).getItems(); // works
+        // this.movements = movementRepository.findItemsBy({'budget.id': this.budgetId}).getItems(); // works again
       }
     },
     initBudget() {
@@ -89,28 +92,28 @@ const EnvelopeList = defineComponent({
         console.log('this.budget', this.budget)
       }
     },
-    deleteEnvelope(envelope: Envelope) {
-      this.entityManager.delete(envelope);
-      // this.initEnvelopes();
+    deleteMovement(movement: Movement) {
+      this.entityManager.delete(movement);
+      // this.initMovements();
     },
-    edit(envelope: Envelope) {
-      this.envelopeModal = envelope.clone();
-      // this.$router.push({name: 'envelope-edit', params: {id: envelope.getId()}});
+    edit(movement: Movement) {
+      this.movementModal = movement.clone();
+      // this.$router.push({name: 'movement-edit', params: {id: movement.getId()}});
     },
     create() {
-      let envelope = new Envelope();
-      envelope.budgetId = this.budgetId;
-      this.envelopeModal = envelope;
+      let movement = new Movement();
+      movement.budgetId = this.budgetId;
+      this.movementModal = movement;
     },
     unbindRepository() {
       budgetRepository.removeEventListener(ListChangedEvent.TYPE, this.initBudget);
-      envelopeRepository.removeEventListener(ListChangedEvent.TYPE, this.initEnvelopes);
-      envelopeRepository.removeEventListener(ListItemChangedEvent.TYPE, this.initEnvelopes);
+      movementRepository.removeEventListener(ListChangedEvent.TYPE, this.initMovements);
+      movementRepository.removeEventListener(ListItemChangedEvent.TYPE, this.initMovements);
     },
     bindRepository() {
       budgetRepository.addEventListener(ListChangedEvent.TYPE, this.initBudget);
-      envelopeRepository.addEventListener(ListChangedEvent.TYPE, this.initEnvelopes);
-      envelopeRepository.addEventListener(ListItemChangedEvent.TYPE, this.initEnvelopes);   // triggers sorting and filtering
+      movementRepository.addEventListener(ListChangedEvent.TYPE, this.initMovements);
+      movementRepository.addEventListener(ListItemChangedEvent.TYPE, this.initMovements);   // triggers sorting and filtering
     },
   },
   unmounted() {
@@ -120,10 +123,10 @@ const EnvelopeList = defineComponent({
   mounted() {
     this.budgetId = parseInt(this.$route.params.budgetId);
     this.bindRepository()
-    this.initEnvelopes();
+    this.initMovements();
   },
 });
-export default EnvelopeList;
+export default MovementList;
 </script>
 
 <style scoped>

@@ -6,20 +6,20 @@
 parameters:
     synergy.grants.actions:
         read: true
-        create: false
-        update: false
-        delete: false
-    synergy.grants.entity:
-        Budget:
-            read: true
-            create: true
-            update: true
-            delete: true
-        Envelope:
-            read: true
-            create: true
-            update: true
-            delete: true
+        create: true
+        update: true
+        delete: true
+#    synergy.grants.entity:
+#        Budget:
+#            read: true
+#            create: true
+#            update: true
+#            delete: true
+#        Envelope:
+#            read: true
+#            create: true
+#            update: true
+#            delete: true
 
 services:
     # default configuration for services in *this* file

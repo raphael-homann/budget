@@ -5,17 +5,18 @@ namespace App\Entity;
 use App\Repository\MovementRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Efrogg\Synergy\Entity\AbstractSynergyEntity;
+use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
+use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: MovementRepository::class)]
-class Movement
+#[SynergyEntity]
+class Movement extends AbstractSynergyEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use SynergyNumericIdEntityTrait;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $amount = null;
+    #[ORM\Column(type: Types::FLOAT, precision: 10, scale: 2)]
+    private ?float $amount = null;
 
     #[ORM\ManyToOne(inversedBy: 'movements')]
     private ?Category $category = null;
@@ -26,17 +27,16 @@ class Movement
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\ManyToOne(inversedBy: 'movements')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Budget $budget = null;
 
-    public function getAmount(): ?string
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(string $amount): static
+    public function setAmount(float $amount): static
     {
         $this->amount = $amount;
 
@@ -75,6 +75,18 @@ class Movement
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getBudget(): ?Budget
+    {
+        return $this->budget;
+    }
+
+    public function setBudget(?Budget $budget): static
+    {
+        $this->budget = $budget;
 
         return $this;
     }

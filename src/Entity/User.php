@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Synergy
     /**
      * @var Collection<int, Budget>
      */
-    #[ORM\ManyToMany(targetEntity: Budget::class, mappedBy: 'user')]
+    #[ORM\ManyToMany(targetEntity: Budget::class, mappedBy: 'users')]
     private Collection $budgets;
 
     public function __construct()

@@ -1,4 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router/dist/vue-router'
+import {createRouter, createWebHistory} from 'vue-router/dist/vue-router'
+import EnvelopeList from "../pages/envelope/EnvelopeList.vue";
+import CategoryList from "../pages/category/CategoryList.vue";
+import MovementList from "../pages/movement/MovementList.vue";
 
 export default () => createRouter({
     history: createWebHistory(),
@@ -16,7 +19,17 @@ export default () => createRouter({
         {
             path: '/budget/:budgetId/envelopes',
             name: 'budget-envelopes',
-            component: () => import('../pages/envelope/EnvelopeList.vue'),
+            component: EnvelopeList,
+        },
+        {
+            path: '/budget/:budgetId/categories',
+            name: 'budget-categories',
+            component: CategoryList,
+        },
+        {
+            path: '/budget/:budgetId/movements',
+            name: 'budget-movements',
+            component: MovementList,
         }
     ],
 })

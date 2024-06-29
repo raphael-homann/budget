@@ -41,11 +41,18 @@ class Budget extends AbstractSynergyEntity
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
+    /**
+     * @var Collection<int, Movement>
+     */
+    #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'budget', orphanRemoval: true)]
+    private Collection $movements;
+
     public function __construct()
     {
         $this->envelopes = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->movements = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -152,6 +159,36 @@ class Budget extends AbstractSynergyEntity
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Movement>
+     */
+    public function getMovements(): Collection
+    {
+        return $this->movements;
+    }
+
+    public function addMovement(Movement $movement): static
+    {
+        if (!$this->movements->contains($movement)) {
+            $this->movements->add($movement);
+            $movement->setBudget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMovement(Movement $movement): static
+    {
+        if ($this->movements->removeElement($movement)) {
+            // set the owning side to null (unless already changed)
+            if ($movement->getBudget() === $this) {
+                $movement->setBudget(null);
+            }
+        }
 
         return $this;
     }

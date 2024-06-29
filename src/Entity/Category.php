@@ -6,14 +6,16 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Efrogg\Synergy\Entity\AbstractSynergyEntity;
+use Efrogg\Synergy\Entity\SynergyEntityTrait;
+use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
+use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-class Category
+#[SynergyEntity]
+class Category extends AbstractSynergyEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use SynergyNumericIdEntityTrait;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -34,11 +36,6 @@ class Category
     public function __construct()
     {
         $this->movements = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

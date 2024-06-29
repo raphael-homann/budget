@@ -5,7 +5,7 @@ import Budget from "../Data/Entity/Budget";
 import {store} from "../service/store";
 import Repository from "@efrogg/synergy/Data/Repository";
 import ListChangedEvent from "@efrogg/synergy/Data/Event/ListChangedEvent";
-const EnvelopeList = defineComponent({
+const BudgetComponent = defineComponent({
   components: {BgEnvelopeEditForm},
   mixins: [],
   data(): {
@@ -35,7 +35,7 @@ const EnvelopeList = defineComponent({
   }
 });
 
-export default EnvelopeList;
+export default BudgetComponent;
 </script>
 
 <template>
@@ -43,6 +43,8 @@ export default EnvelopeList;
   <v-container fluid v-if="budget">
     <h1>Budget : {{ budget.name }}</h1>
     <v-btn :to="{name:'budget-envelopes',params:{budgetId:budget.id}}">Envelopes</v-btn>
+    <v-btn :to="{name:'budget-categories',params:{budgetId:budget.id}}">Catégories</v-btn>
+    <v-btn :to="{name:'budget-movements',params:{budgetId:budget.id}}">Mouvements</v-btn>
   </v-container>
 </template>
 
