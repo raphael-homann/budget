@@ -48,7 +48,7 @@
       <v-row justify="end" v-if="envelopeRepository">
         <v-col cols="8">
           <v-autocomplete
-              :items="envelopeRepository.getItems()"
+              :items="getEnvelopes()"
               item-title="name"
               item-value="id"
               v-model="category.envelopeId"
@@ -57,7 +57,7 @@
           ></v-autocomplete>
         </v-col>
         <v-col cols="4">
-          <v-btn icon='mdi-plus-thick' @click="envelopeModal=new Envelope()" variant="tonal" color="primary"
+          <v-btn icon='mdi-plus-thick' @click="newEnvelope" variant="tonal" color="primary"
                  size="small"></v-btn>
           <v-btn v-if="category.envelope" icon='mdi-pencil' @click="editEnvelope" variant="tonal"
                  color="secondary" size="small"></v-btn>
@@ -125,6 +125,15 @@ function modalTitle(entity: Entity): string {
       : t('budget.entities.' + className + '.listing.add');
 }
 
+function newEnvelope() {
+  let newEnvelope = new Envelope();
+  newEnvelope.budgetId = props.category.budgetId;
+  envelopeModal.value = newEnvelope;
+}
+function getEnvelopes() {
+  let budgetId = props.category.budgetId;
+  return envelopeRepository?.getItems().filter(e => e.budgetId === budgetId) ?? [];
+}
 function save() {
   props.entityManager
       .save(props.category)

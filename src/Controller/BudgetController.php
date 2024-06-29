@@ -17,9 +17,10 @@ class BudgetController extends AbstractController
         ]);
     }
 
-    #[Route('/import', name: 'app_budget_import')]
+    #[Route('/import', name: 'app_budget_import', methods: ['POST'])]
     public function import(): Response
     {
+
         return $this->render('budget/import.html.twig', [
         ]);
     }

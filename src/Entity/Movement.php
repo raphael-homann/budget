@@ -31,6 +31,9 @@ class Movement extends AbstractSynergyEntity
     #[ORM\JoinColumn(nullable: false)]
     private ?Budget $budget = null;
 
+    #[ORM\ManyToOne(inversedBy: 'movements')]
+    private ?Import $import = null;
+
     public function getAmount(): ?float
     {
         return $this->amount;
@@ -87,6 +90,18 @@ class Movement extends AbstractSynergyEntity
     public function setBudget(?Budget $budget): static
     {
         $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function getImport(): ?Import
+    {
+        return $this->import;
+    }
+
+    public function setImport(?Import $import): static
+    {
+        $this->import = $import;
 
         return $this;
     }

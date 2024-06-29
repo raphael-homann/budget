@@ -2,6 +2,15 @@
   <h1>edit movements (budget : {{ budget?.name }} {{ budget?.id }})</h1>
   <v-container>
 
+    <v-dialog v-model="categoryModal" width="auto" :close-on-back="false">
+      <bg-category-edit-form
+          :category="categoryModal"
+          :entity-manager="entityManager"
+          @close="categoryModal=null"
+          @save="onCategorySaved"
+      />
+    </v-dialog>
+
     <v-dialog :model-value="movementModal" max-width="500">
       <bg-movement-edit-form :entity-manager="entityManager" :movement="movementModal" @close="movementModal=null"
                              @save="movementModal=null"></bg-movement-edit-form>
@@ -18,6 +27,26 @@
       <template v-slot:item.actions="{ item }">
         <v-icon @click="movementModal=item.clone()">mdi-pencil</v-icon>
         <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>
+      </template>
+
+      <template v-slot:item.category="{ item }">
+        {{ item.category?.name }}
+        <v-autocomplete
+            :items="categories"
+            item-title="name"
+            item-value="id"
+            v-model="item.categoryId"
+            label="Catégorie"
+            required
+            @update:modelValue="entityManager.save(item)"
+            @update:search="categorySearchUpdated"
+        >
+          <template v-slot:no-data>
+            <v-btn @click="newCategory(item)">create !</v-btn>
+          </template>
+        </v-autocomplete>
+<!--        <v-icon @click="movementModal=item.clone()">mdi-pencil</v-icon>-->
+<!--        <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>-->
       </template>
     </v-data-table>
   </v-container>
@@ -37,16 +66,22 @@ import EqualsFilter from "@efrogg/synergy/Data/Criteria/Filter/EqualsFilter";
 import FieldSort from "@efrogg/synergy/Data/Criteria/Sort/FieldSort";
 import EntityChangedEvent from "../../../custom/npm-src/SynergyTS-npm/Data/Event/EntityChangedEvent";
 import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEvent";
+import Category from "../../Data/Entity/Category";
+import BgCategoryEditForm from "../../Data/Form/BgCategoryEditForm.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const movementRepository = entityManager.getRepository(Movement);
 const budgetRepository = entityManager.getRepository(Budget);
 
 const MovementList = defineComponent({
-  components: {BgMovementEditForm},
+  components: {BgCategoryEditForm, BgMovementEditForm},
   data(): {
+    currentCategorySearch: string|null,
+    currentMovement: Movement|null,
+
     movements: Movement[],
     movementModal: null | Movement,
+    categoryModal: null | Category
     entityManager: EntityManager,
     budgetId: null | number,
     budget: null | Budget,
@@ -54,20 +89,27 @@ const MovementList = defineComponent({
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
+      currentCategorySearch: null,
+      currentMovement: null,
       movements: [],
       movementModal: null,
+      categoryModal: null,
       entityManager: entityManager,
       budgetId: null,
       budget: null,
       headers: [
         {title: 'Amount', value: 'amount'},
         {title: 'Commentaire', value: 'comment'},
-        {title: 'Catégorie', value: 'category.name', sortable: false},
+        {title: 'Catégorie', value: 'category', sortable: false},
         {title: 'Enveloppe', value: 'category.envelope.name', sortable: false},
         {title: 'Actions', value: 'actions', sortable: false},
       ]
     }
-  }, computed: {},
+  }, computed: {
+    categories() {
+      return store.entityManager.getRepository(Category).getItems();
+    }
+  },
   methods: {
     initMovements() {
       console.log('initMovements', this.budgetId)
@@ -84,6 +126,28 @@ const MovementList = defineComponent({
         this.movements = movementRepository.search(criteria).getItems();                // works too
         // this.movements = movementRepository.findItemsBy({'budget.id': new EqualsFilter('budget.id',this.budgetId)}).getItems(); // works
         // this.movements = movementRepository.findItemsBy({'budget.id': this.budgetId}).getItems(); // works again
+      }
+    },
+    categorySearchUpdated(search: string) {
+      // save search for when we create a new category
+      this.currentCategorySearch = search;
+    },
+    newCategory(movement: Movement) {
+      // open the new category modal ??
+      this.currentMovement = movement;
+
+      let category = new Category();
+      category.name = this.currentCategorySearch;
+      category.budgetId = this.budgetId;
+      // with modal
+      this.categoryModal = category;
+    },
+    onCategorySaved(category: Category) {
+      this.categoryModal = null;
+      console.log('category saved', category)
+      if(null !== this.currentMovement) {
+        this.currentMovement.categoryId = category.getId();
+        this.entityManager.save(this.currentMovement);
       }
     },
     initBudget() {

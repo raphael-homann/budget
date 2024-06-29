@@ -2,40 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Budget;
+use App\Entity\Import;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Budget>
- * @method Budget|null find($id, $lockMode = null, $lockVersion = null)
+ * @extends ServiceEntityRepository<Import>
  */
-class BudgetRepository extends ServiceEntityRepository
+class ImportRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Budget::class);
+        parent::__construct($registry, Import::class);
     }
 
 //    /**
-//     * @return Budget[] Returns an array of Budget objects
+//     * @return Import[] Returns an array of Import objects
 //     */
 //    public function findByExampleField($value): array
 //    {
-//        return $this->createQueryBuilder('b')
-//            ->andWhere('b.exampleField = :val')
+//        return $this->createQueryBuilder('i')
+//            ->andWhere('i.exampleField = :val')
 //            ->setParameter('val', $value)
-//            ->orderBy('b.id', 'ASC')
+//            ->orderBy('i.id', 'ASC')
 //            ->setMaxResults(10)
 //            ->getQuery()
 //            ->getResult()
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Budget
+//    public function findOneBySomeField($value): ?Import
 //    {
-//        return $this->createQueryBuilder('b')
-//            ->andWhere('b.exampleField = :val')
+//        return $this->createQueryBuilder('i')
+//            ->andWhere('i.exampleField = :val')
 //            ->setParameter('val', $value)
 //            ->getQuery()
 //            ->getOneOrNullResult()

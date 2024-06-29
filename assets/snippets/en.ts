@@ -10,9 +10,7 @@ export const en = {
             title: 'Budget management',
         },
         menu: {
-            daily: 'Daily',
-            workflow: 'Workflow',
-            todos: 'Todos',
+            home: 'Home',
         },
         entities: {
             Budget:{

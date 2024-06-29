@@ -9,10 +9,10 @@
     </v-app-bar>
 
     <v-navigation-drawer color="secondary" v-if="sidebar" expand-on-hover rail permanent>
-      <v-list-item prepend-icon="mdi-home" to="/budget/daily" :title="t('budget.menu.daily')"></v-list-item>
+      <v-list-item prepend-icon="mdi-home" to="/budget" :title="t('budget.menu.home')"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item prepend-icon="mdi-currency-eur" to="/budget/workflow" :title="t('budget.menu.workflow')"></v-list-item>
-      <v-list-item prepend-icon="mdi-format-list-checkbox" to="/budget/todos" :title="t('budget.menu.todos')"></v-list-item>
+<!--      <v-list-item prepend-icon="mdi-currency-eur" to="/budget/workflow" :title="t('budget.menu.workflow')"></v-list-item>-->
+<!--      <v-list-item prepend-icon="mdi-format-list-checkbox" to="/budget/todos" :title="t('budget.menu.todos')"></v-list-item>-->
       <template v-slot:append>
         <v-list :items="languages" @click:select="selectLanguage"></v-list>
       </template>

@@ -3,7 +3,7 @@
 <template id="Home">
   <h1>
     <v-icon>mdi-home</v-icon>
-    Home
+    {{ t('budget.menu.home') }}
   </h1>
   <v-dialog v-model="budgetModal" max-width="500" >
     <bg-budget-edit-form :entity-manager="entityManager" :budget="budgetModal" @close="budgetModal=null" @save="budgetModal=null"></bg-budget-edit-form>
@@ -28,9 +28,17 @@ import BgBudgetEditForm from "../Data/Form/BgBudgetEditForm.vue";
 import EntityManager from "@efrogg/synergy/Data/EntityManager";
 import ListChangedEvent from "@efrogg/synergy/Data/Event/ListChangedEvent";
 import Repository from "@efrogg/synergy/Data/Repository";
+import { useLocale } from "vuetify/lib/framework.mjs";
+
 
 const Home = defineComponent({
   components: {BgBudgetEditForm, BudgetCard},
+  setup() {
+    const { t } = useLocale()
+    return {
+      t
+    }
+  },
   data(): {
     budgets: Budget[],
     budgetModal: null | Budget,

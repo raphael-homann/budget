@@ -9,9 +9,7 @@ export const fr = {
             title: 'Gestion de budget',
         },
         menu: {
-            daily: 'Quotidien',
-            workflow: 'Flux de travail',
-            todos: 'Tâches',
+            home: 'Accueil',
         },
         entities: {
             Budget:{
