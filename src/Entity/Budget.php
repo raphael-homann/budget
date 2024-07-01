@@ -7,12 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Efrogg\Synergy\Entity\AbstractSynergyEntity;
+use Efrogg\Synergy\Entity\NumericEntityIdInterface;
 use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
 use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[SynergyEntity(name: 'budget', description: 'Budget entity')]
-class Budget extends AbstractSynergyEntity
+class Budget extends AbstractSynergyBudgetEntity
 {
     use SynergyNumericIdEntityTrait;
 

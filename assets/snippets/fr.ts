@@ -31,6 +31,17 @@ export const fr = {
                     name: 'Nom',
                     description: 'Description',
                 }
+            },
+            Category:{
+                listing:{
+                    add: 'Ajouter catégorie',
+                    edit: 'Editer catégorie',
+                },
+                fields:{
+                    name: 'Nom',
+                    budget: 'Budget',
+                    envelope: 'Enveloppe',
+                }
             }
         }
     },

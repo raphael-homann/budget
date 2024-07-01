@@ -13,7 +13,7 @@ use Efrogg\Synergy\Mapping\SynergyFormField;
 
 #[ORM\Entity(repositoryClass: EnvelopeRepository::class)]
 #[SynergyEntity]
-class Envelope extends AbstractSynergyEntity
+class Envelope extends AbstractSynergyBudgetEntity
 {
     use SynergyNumericIdEntityTrait;
 

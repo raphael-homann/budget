@@ -1,9 +1,10 @@
 import Entity from "@efrogg/synergy/Data/Entity";
 import Category from "./Category";
 import Budget from "./Budget";
+import Import from "./Import";
 // --imports--  ! keep this line
 
-export default class Movement extends Entity {
+export default class Movement extends Entity  {
 
     public amount: string = '';
     private _category: Category | null = null;
@@ -13,6 +14,8 @@ export default class Movement extends Entity {
 
     private _categoryId: string | null = null;
     private _budgetId: string | null = null;
+    private _importId: string | null = null;
+    private _import: Import | null = null;
     // ---properties---  ! keep this line
 
     public get category(): Category | null {
@@ -39,6 +42,16 @@ export default class Movement extends Entity {
     public set budgetId(value: string | null) {
         this._budgetId = value;
         this._budget = null;
+    }
+    public get importId(): string | null {
+        return this._importId;
+    }
+    public set importId(value: string | null) {
+        this._importId = value;
+        this._import = null;
+    }
+    public get import(): Import | null {
+        return this._import ??= this.getRelation(Import,this.importId);
     }
     // ---methods--- ! keep this line
 }

@@ -3,21 +3,21 @@ import Budget from "./Budget";
 import Envelope from "./Envelope";
 // --imports--  ! keep this line
 
-export default class Category extends Entity {
+export default class Category extends Entity  {
 
     public name: string = '';
-    private _budgetId: string | null = null;
+    private _budgetId: number | null = null;
     private _budget: Budget | null = null;
-    private _envelopeId: string | null = null;
+    private _envelopeId: number | null = null;
     private _envelope: Envelope | null = null;
 
     // ---properties---  ! keep this line
 
-    public get budgetId(): string | null {
+    public get budgetId(): number | null {
         return this._budgetId;
     }
 
-    public set budgetId(value: string | null) {
+    public set budgetId(value: number | null) {
         this._budgetId = value;
         this._budget = null;
     }
@@ -26,11 +26,11 @@ export default class Category extends Entity {
         return this._budget ??= this.getRelation(Budget, this.budgetId);
     }
 
-    public get envelopeId(): string | null {
+    public get envelopeId(): number | null {
         return this._envelopeId;
     }
 
-    public set envelopeId(value: string | null) {
+    public set envelopeId(value: number | null) {
         this._envelopeId = value;
         this._envelope = null;
     }

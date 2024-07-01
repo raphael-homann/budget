@@ -7,21 +7,13 @@
         @save="onBudgetSaved"
     />
   </v-dialog>
-  <v-dialog v-model="envelopeModal" width="auto" :close-on-back="false">
-    <bg-envelope-edit-form
-        :envelope="envelopeModal"
-        :entity-manager="props.entityManager"
-        @close="envelopeModal=null"
-        @save="onEnvelopeSaved"
-    />
-  </v-dialog>
 
-  <v-card v-if="category" :title="modalTitle(category)">
+  <v-card v-if="import" :title="modalTitle(import)">
     <v-card-text>
 
-      <!--name-->
-      <v-text-field v-model.number="category.name"
-                    :label="t('budget.entities.Category.fields.name')" required>
+      <!--fileName-->
+      <v-text-field v-model.number="import.fileName"
+                    :label="t('budget.entities.Import.fields.fileName')" required>
       </v-text-field>
 
       <!-- budget -->
@@ -31,35 +23,15 @@
               :items="budgetRepository.getItems()"
               item-title="name"
               item-value="id"
-              v-model="category.budgetId"
-              :label="t('budget.entities.Category.fields.budget')"
+              v-model="import.budgetId"
+              :label="t('budget.entities.Import.fields.budget')"
               required
           ></v-autocomplete>
         </v-col>
         <v-col cols="4">
           <v-btn icon='mdi-plus-thick' @click="budgetModal=new Budget()" variant="tonal" color="primary"
                  size="small"></v-btn>
-          <v-btn v-if="category.budget" icon='mdi-pencil' @click="editBudget" variant="tonal"
-                 color="secondary" size="small"></v-btn>
-        </v-col>
-      </v-row>
-
-      <!-- envelope -->
-      <v-row justify="end" v-if="envelopeRepository">
-        <v-col cols="8">
-          <v-autocomplete
-              :items="getEnvelopes()"
-              item-title="name"
-              item-value="id"
-              v-model="category.envelopeId"
-              :label="t('budget.entities.Category.fields.envelope')"
-              required
-          ></v-autocomplete>
-        </v-col>
-        <v-col cols="4">
-          <v-btn icon='mdi-plus-thick' @click="newEnvelope" variant="tonal" color="primary"
-                 size="small"></v-btn>
-          <v-btn v-if="category.envelope" icon='mdi-pencil' @click="editEnvelope" variant="tonal"
+          <v-btn v-if="import.budget" icon='mdi-pencil' @click="editBudget" variant="tonal"
                  color="secondary" size="small"></v-btn>
         </v-col>
       </v-row>
@@ -76,7 +48,7 @@
   </v-card>
 </template>
 <script setup lang="ts">
-import Category from "../Entity/Category";
+import Import from "../Entity/Import";
 import {useLocale} from "vuetify";
 import Entity from "@efrogg/synergy/Data/Entity";
 // import SpDateField from "../Form/SpDateField.vue";
@@ -87,22 +59,17 @@ import Repository from "@efrogg/synergy/Data/Repository";
 // budget imports
 import Budget from "../Entity/Budget";
 import BgBudgetEditForm from "./BgBudgetEditForm.vue";
-// envelope imports
-import Envelope from "../Entity/Envelope";
-import BgEnvelopeEditForm from "./BgEnvelopeEditForm.vue";
 
 const budgetModal: Ref<Budget | null> = ref(null);
 let budgetRepository: Repository<Budget> | null = null;
-const envelopeModal: Ref<Envelope | null> = ref(null);
-let envelopeRepository: Repository<Envelope> | null = null;
 
 const props = defineProps({
   entityManager: {
     type: EntityManager,
     required: true
   },
-  category: {
-    type: Category,
+  import: {
+    type: Import,
     required: true
   }
 })
@@ -115,7 +82,6 @@ function close() {
 
 onMounted(() => {
   budgetRepository = props.entityManager.getRepository(Budget)
-  envelopeRepository = props.entityManager.getRepository(Envelope)
 })
 
 function modalTitle(entity: Entity): string {
@@ -125,20 +91,11 @@ function modalTitle(entity: Entity): string {
       : t('budget.entities.' + className + '.listing.add');
 }
 
-function newEnvelope() {
-  let newEnvelope = new Envelope();
-  newEnvelope.budgetId = props.category.budgetId;
-  envelopeModal.value = newEnvelope;
-}
-function getEnvelopes() {
-  let budgetId = props.category.budgetId;
-  return envelopeRepository?.getItems().filter(e => e.budgetId === budgetId) ?? [];
-}
 function save() {
   props.entityManager
-      .save(props.category)
+      .save(props.import)
       .then(() => {
-        emit('save', props.category);
+        emit('save', props.import);
       })
       .catch((e: any) => {
         console.error(e);
@@ -146,20 +103,12 @@ function save() {
 }
 
 function editBudget() {
-  budgetModal.value = budgetRepository?.get(props.category.budgetId)?.clone() ?? null
+  budgetModal.value = budgetRepository?.get(props.import.budgetId)?.clone() ?? null
 }
 
 function onBudgetSaved(budget: Budget) {
-  props.category.budgetId = budget.getId()??null;
+  props.import.budgetId = budget.getId();
   budgetModal.value = null;
-}
-function editEnvelope() {
-  envelopeModal.value = envelopeRepository?.get(props.category.envelopeId)?.clone() ?? null
-}
-
-function onEnvelopeSaved(envelope: Envelope) {
-  props.category.envelopeId = envelope.getId()??null;
-  envelopeModal.value = null;
 }
 
 </script>

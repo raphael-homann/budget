@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Efrogg\Synergy\Entity\NumericEntityIdInterface;
 use Efrogg\Synergy\Entity\SynergyEntityInterface;
 use Efrogg\Synergy\Entity\SynergyEntityTrait;
 use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
@@ -20,9 +21,8 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[SynergyEntity]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, SynergyEntityInterface
+class User extends AbstractSynergyBudgetEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    use SynergyEntityTrait;
     use SynergyNumericIdEntityTrait;
 
     #[ORM\Column(length: 180)]

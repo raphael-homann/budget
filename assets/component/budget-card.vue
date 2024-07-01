@@ -47,6 +47,7 @@ export default {
     <v-card-actions>
       <v-btn color="orange" text="edit" @click="console.log('edit',budget);$emit('edit', budget)"></v-btn>
       <v-btn color="orange" text="view" :to="{name: 'budget-view', params: {id: budget.id}}"></v-btn>
+<!--      <v-btn color="orange" text="view" :to="{name: 'xxx-view', params: {id: budget.id}}"></v-btn>-->
       <v-btn color="red" text="delete" @click="$emit('delete', budget)"></v-btn>
     </v-card-actions>
   </v-card>

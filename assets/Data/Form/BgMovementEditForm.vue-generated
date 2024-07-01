@@ -15,6 +15,14 @@
         @save="onBudgetSaved"
     />
   </v-dialog>
+  <v-dialog v-model="importModal" width="auto" :close-on-back="false">
+    <bg-import-edit-form
+        :import="importModal"
+        :entity-manager="props.entityManager"
+        @close="importModal=null"
+        @save="onImportSaved"
+    />
+  </v-dialog>
 
   <v-card v-if="movement" :title="modalTitle(movement)">
     <v-card-text>
@@ -73,6 +81,26 @@
                  color="secondary" size="small"></v-btn>
         </v-col>
       </v-row>
+
+      <!-- import -->
+      <v-row justify="end" v-if="importRepository">
+        <v-col cols="8">
+          <v-autocomplete
+              :items="importRepository.getItems()"
+              item-title="name"
+              item-value="id"
+              v-model="movement.importId"
+              :label="t('budget.entities.Movement.fields.import')"
+              required
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="4">
+          <v-btn icon='mdi-plus-thick' @click="importModal=new Import()" variant="tonal" color="primary"
+                 size="small"></v-btn>
+          <v-btn v-if="movement.import" icon='mdi-pencil' @click="editImport" variant="tonal"
+                 color="secondary" size="small"></v-btn>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-card-actions>
@@ -100,11 +128,16 @@ import BgCategoryEditForm from "./BgCategoryEditForm.vue";
 // budget imports
 import Budget from "../Entity/Budget";
 import BgBudgetEditForm from "./BgBudgetEditForm.vue";
+// import imports
+import Import from "../Entity/Import";
+import BgImportEditForm from "./BgImportEditForm.vue";
 
 const categoryModal: Ref<Category | null> = ref(null);
 let categoryRepository: Repository<Category> | null = null;
 const budgetModal: Ref<Budget | null> = ref(null);
 let budgetRepository: Repository<Budget> | null = null;
+const importModal: Ref<Import | null> = ref(null);
+let importRepository: Repository<Import> | null = null;
 
 const props = defineProps({
   entityManager: {
@@ -126,6 +159,7 @@ function close() {
 onMounted(() => {
   categoryRepository = props.entityManager.getRepository(Category)
   budgetRepository = props.entityManager.getRepository(Budget)
+  importRepository = props.entityManager.getRepository(Import)
 })
 
 function modalTitle(entity: Entity): string {
@@ -161,6 +195,14 @@ function editBudget() {
 function onBudgetSaved(budget: Budget) {
   props.movement.budgetId = budget.getId();
   budgetModal.value = null;
+}
+function editImport() {
+  importModal.value = importRepository?.get(props.movement.importId)?.clone() ?? null
+}
+
+function onImportSaved(import: Import) {
+  props.movement.importId = import.getId();
+  importModal.value = null;
 }
 
 </script>

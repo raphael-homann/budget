@@ -1,4 +1,5 @@
 <template>
+  <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
   <h1>edit categories (budget : {{ budget?.name }} {{ budget?.id }}</h1>
   <v-container>
 
@@ -45,6 +46,7 @@ const CategoryList = defineComponent({
   components: {BgCategoryEditForm},
   data(): {
     categories: Category[],
+    breadcrumbs: [],
     categoryModal: null | Category,
     entityManager: EntityManager,
     budgetId: null | number,
@@ -53,6 +55,7 @@ const CategoryList = defineComponent({
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
+      breadcrumbs: [],
       categories: [],
       categoryModal: null,
       entityManager: entityManager,
@@ -61,14 +64,13 @@ const CategoryList = defineComponent({
       headers: [
         {title: 'Name', value: 'name'},
         {title: 'Envelope', value: 'envelope.name'},
-        {title: 'Description', value: 'description'},
         {title: 'Actions', value: 'actions', sortable: false}
       ]
     }
-  }, computed: {},
+  }, computed: {
+  },
   methods: {
     initCategories() {
-      console.log('initCategories', this.budgetId)
       if (this.budgetId) {
         let criteria = new Criteria();
         criteria
@@ -84,9 +86,21 @@ const CategoryList = defineComponent({
         // this.categories = categoryRepository.findItemsBy({'budget.id': this.budgetId}).getItems(); // works again
       }
     },
+    updateBreadCrumbs() {
+      console.log(this.$router.resolve({name: 'home'}));
+      let breadcrumbs = [
+        {title: 'Home', disabled: false, href: this.$router.resolve({name: 'home'}).href},
+      ];
+      if(this.budget)
+        breadcrumbs.push({title: this.budget.name, disabled: false, href: this.$router.resolve({name: 'budget-view',params: {id: this.budgetId??1}}).href});
+
+      breadcrumbs.push({title: 'catégories', disabled: true, href: this.$router.resolve({name: 'budget-categories',params: {budgetId: this.budgetId??1}}).href});
+      this.breadcrumbs = breadcrumbs;
+    },
     initBudget() {
       if (this.budgetId) {
         this.budget = budgetRepository.get(this.budgetId);
+        this.updateBreadCrumbs();
         console.log('this.budget', this.budget)
       }
     },
@@ -122,6 +136,7 @@ const CategoryList = defineComponent({
     this.budgetId = parseInt(this.$route.params.budgetId);
     this.bindRepository()
     this.initCategories();
+    this.initBudget();
   },
 });
 

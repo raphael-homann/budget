@@ -6,14 +6,12 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Efrogg\Synergy\Entity\AbstractSynergyEntity;
-use Efrogg\Synergy\Entity\SynergyEntityTrait;
 use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
 use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[SynergyEntity]
-class Category extends AbstractSynergyEntity
+class Category extends AbstractSynergyBudgetEntity
 {
     use SynergyNumericIdEntityTrait;
 

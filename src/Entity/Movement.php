@@ -5,13 +5,12 @@ namespace App\Entity;
 use App\Repository\MovementRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Efrogg\Synergy\Entity\AbstractSynergyEntity;
 use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
 use Efrogg\Synergy\Mapping\SynergyEntity;
 
 #[ORM\Entity(repositoryClass: MovementRepository::class)]
 #[SynergyEntity]
-class Movement extends AbstractSynergyEntity
+class Movement extends AbstractSynergyBudgetEntity
 {
     use SynergyNumericIdEntityTrait;
 

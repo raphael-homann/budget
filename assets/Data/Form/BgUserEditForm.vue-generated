@@ -7,11 +7,6 @@
       <v-text-field v-model.number="user.email"
                     :label="t('budget.entities.User.fields.email')" required>
       </v-text-field>
-
-      <!--_entityName-->
-      <v-text-field v-model.number="user._entityName"
-                    :label="t('budget.entities.User.fields._entityName')" required>
-      </v-text-field>
     </v-card-text>
 
     <v-card-actions>

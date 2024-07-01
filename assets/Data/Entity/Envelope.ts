@@ -6,7 +6,7 @@ export default class Envelope extends Entity  {
 
     public name: string = '';
     private _budget: Budget | null = null;
-    private _budgetId: string | null = null;
+    private _budgetId: number | null = null;
     // ---properties---  ! keep this line
 
     public get budget(): Budget | null {
@@ -14,11 +14,11 @@ export default class Envelope extends Entity  {
         return this._budget ??= this.getRelation(Budget,this.budgetId);
     }
 
-    public get budgetId(): string | null {
+    public get budgetId(): number | null {
         return this._budgetId;
     }
 
-    public set budgetId(value: string | null) {
+    public set budgetId(value: number | null) {
         this._budgetId = value;
         this._budget = null;
     }

@@ -55,6 +55,7 @@ const Home = defineComponent({
   },
   methods: {
     initBudgets() {
+      console.log(this.$router.getRoutes());
       console.log('initBudgets')
       this.budgets = store.entityManager.getRepository(Budget).getItems();
     },

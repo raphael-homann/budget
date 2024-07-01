@@ -7,9 +7,17 @@ export default () => createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: '/budget/',
+            path: '/budget',
             name: 'home',
             component: () => import('../pages/Home.vue'),
+            // children: [
+            //     {
+            //         path: ':id',
+            //         name: 'budget-view',
+            //         component: () => import('../pages/Budget.vue'),
+            //     },
+            // ]
+
         },
         {
             path: '/budget/:id',
@@ -30,6 +38,7 @@ export default () => createRouter({
             path: '/budget/:budgetId/movements',
             name: 'budget-movements',
             component: MovementList,
+            parent: 'budget-view',
         }
     ],
 })
