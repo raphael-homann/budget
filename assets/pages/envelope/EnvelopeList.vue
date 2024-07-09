@@ -35,7 +35,7 @@ import Budget from "../../Data/Entity/Budget";
 import Criteria from "@efrogg/synergy/Data/Criteria/Criteria";
 import EqualsFilter from "@efrogg/synergy/Data/Criteria/Filter/EqualsFilter";
 import FieldSort from "@efrogg/synergy/Data/Criteria/Sort/FieldSort";
-import EntityChangedEvent from "../../../custom/npm-src/SynergyTS-npm/Data/Event/EntityChangedEvent";
+import EntityChangedEvent from "@efrogg/synergy/Data/Event/EntityChangedEvent";
 import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEvent";
 
 const entityManager: EntityManager = store.entityManager;

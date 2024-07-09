@@ -20,9 +20,9 @@ import routeParamsMixin from "../../mixin/routeParamsMixin";
 import RepositoryManager from "@efrogg/synergy/Data/RepositoryManager";
 import Category from "../../Data/Entity/Category";
 import Envelope from "../../Data/Entity/Envelope";
-import Criteria from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Criteria";
-import EqualsFilter from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Filter/EqualsFilter";
-import FieldSort from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Sort/FieldSort";
+import Criteria from "@efrogg/synergy/Data/Criteria/Criteria";
+import EqualsFilter from "@efrogg/synergy/Data/Criteria/Filter/EqualsFilter";
+import FieldSort from "@efrogg/synergy/Data/Criteria/Sort/FieldSort";
 
 // define the entity manager
 const entityManager: EntityManager = new EntityManager(
