@@ -29,7 +29,6 @@ const entityManager: EntityManager = new EntityManager(
     new RepositoryManager([Budget, Movement, Category, Envelope])
 );
 
-const movementRepository = entityManager.getRepository(Movement);
 const budgetRepository = entityManager.getRepository(Budget);
 
 const MovementListV2 = defineComponent({
@@ -54,8 +53,10 @@ const MovementListV2 = defineComponent({
           .addAssociation('category.envelope')
           .setLimit(10)
           // .setOffset(2)
-          .addSort(new FieldSort('amount', 'desc'));
-      entityManager.search(Movement, criteria).then(({result}) => {
+          // .addSort(new FieldSort('date', 'desc'))
+      ;
+      entityManager.search(Movement, criteria).then(({result, fullData}) => {
+        console.log('result : ', result, 'fullData : ', fullData)
         this.movements = result
       })
     },
@@ -64,8 +65,7 @@ const MovementListV2 = defineComponent({
       this.initMovements(); // needs budgetId
       let criteria = new Criteria();
       criteria.addFilter(new EqualsFilter('id', this.budgetId));
-      entityManager.search(Budget, criteria).then(({result, fullData}) => {
-        console.log('result : ', result)
+      entityManager.search(Budget, criteria).then(({result}) => {
         this.budget = result[0];
       });
       budgetRepository.search(criteria)
