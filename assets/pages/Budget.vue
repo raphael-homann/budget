@@ -59,6 +59,7 @@ export default BudgetComponent;
     <v-btn :to="{name:'budget-envelopes',params:{budgetId:budget.id}}">Envelopes</v-btn>
     <v-btn :to="{name:'budget-categories',params:{budgetId:budget.id}}">Catégories</v-btn>
     <v-btn :to="{name:'budget-movements',params:{budgetId:budget.id}}">Mouvements</v-btn>
+    <v-btn :to="{name:'budget-movements-v2',params:{budgetId:budget.id}}">Mouvements V2</v-btn>
     <v-btn @click="showImportModal=true">Importer</v-btn>
   </v-container>
 </template>

@@ -17,7 +17,7 @@ class Movement extends AbstractSynergyBudgetEntity
     #[ORM\Column(type: Types::FLOAT, precision: 10, scale: 2)]
     private ?float $amount = null;
 
-    #[ORM\ManyToOne(inversedBy: 'movements')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'movements')]
     private ?Category $category = null;
 
     #[ORM\Column(length: 255)]
@@ -26,7 +26,7 @@ class Movement extends AbstractSynergyBudgetEntity
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'movements')]
+    #[ORM\ManyToOne(targetEntity: Budget::class, inversedBy: 'movements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Budget $budget = null;
 

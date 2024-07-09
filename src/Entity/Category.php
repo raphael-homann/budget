@@ -18,11 +18,11 @@ class Category extends AbstractSynergyBudgetEntity
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[ORM\ManyToOne(targetEntity:Budget::class,inversedBy: 'categories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Budget $budget = null;
 
-    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[ORM\ManyToOne(targetEntity:Envelope::class,inversedBy: 'categories')]
     private ?Envelope $envelope = null;
 
     /**
