@@ -8,6 +8,7 @@ use App\Entity\Movement;
 use App\Helper\DryRunTrait;
 use App\Importer\CreditAgricoleImporter;
 use App\Importer\FileReader\FileReaderFactory;
+use App\Importer\ImportStats;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -26,8 +27,17 @@ class MovementImporter
     ) {
     }
 
-    public function import(string $file,Budget $budget): void
+    /**
+     * @return string
+     */
+    public function getImportBasePath(): string
     {
+        return $this->importBasePath;
+    }
+
+    public function import(string $file,Budget $budget): ImportStats
+    {
+        $stats = new ImportStats();
         $path = $this->importBasePath . '/' . $file;
         if (!file_exists($path)) {
             throw new InvalidArgumentException(sprintf('File [%s] not found', $path));
@@ -35,7 +45,7 @@ class MovementImporter
 
         if ($this->isDryRun()) {
             $this->logger->info('Dry-run: Importing file ' . $file);
-            return;
+            $stats;
         }
 
         $this->logger->info('Importing file ' . $file);
@@ -46,6 +56,7 @@ class MovementImporter
 
         $import = new Import();
         $import->setFileName($file);
+        $import->setBudget($budget);
         $this->entityManager->persist($import);
         $this->entityManager->flush();
 
@@ -54,13 +65,17 @@ class MovementImporter
             $movement->setBudget($budget);
             $movement->setImport($import);
             if($this->alreadyExists($movement,$budget)) {
+                $stats->incrementSkipped();
                 $this->logger->warning('Movement already exists, skipping');
                 continue;
             }
+            $stats->incrementImported();
             $this->entityManager->persist($movement);
 //            dump($movement->getDate()->format('Y-m-d') . ' : ' . $movement->getAmount());
         }
         $this->entityManager->flush();
+
+        return $stats;
     }
 
     private function alreadyExists(Movement $newMovement, Budget $budget): bool

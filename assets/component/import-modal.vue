@@ -9,16 +9,71 @@ export default {
       required: true
     }
   },
-  data() {
+  data(): {
+    file: File | null,
+    dryRun: boolean,
+    overwrite: boolean,
+    errorMessage: string|null,
+    stats: { string: string }|null
+  } {
     return {
-      file: null
+      file: null,
+      dryRun: true,
+      overwrite: false,
+      errorMessage: null,
+      stats: null
     }
   },
   methods: {
     importFile() {
 
-      console.log('importFile', this.file)
-      this.$emit('finished')
+      this.errorMessage = null;
+      this.stats = null;
+
+      if (!this.file) {
+        this.setError('No file selected');
+        return;
+      }
+
+      let formData = new FormData();
+      formData.append('budget-id', this.budgetId?.toString());
+      formData.append('file', this.file)
+      formData.append('dry-run', this.dryRun ? 'true' : 'false');
+      formData.append('overwrite', this.overwrite ? 'true' : 'false');
+
+
+      fetch('/budget/import', {
+        method: 'POST',
+        body: formData
+      }).then((response: Response) => {
+        response.json().then((json) => {
+          if (response.status !== 200) {
+            this.setError(json.message);
+            console.error('import failed', response)
+            return;
+          }
+          if (json.status !== 'ok') {
+            this.setError(json.message);
+          }
+          this.displayStats(json.statistics)
+          // ok, started !!
+          console.log('started', response)
+        }).catch((error) => {
+          console.error('import failed', error)
+        });
+        // this.loadWorks();
+        // this.$emit('finished')
+      }).catch((error) => {
+        console.log(error)
+      });
+
+    },
+    setError(message: string): void {
+      this.errorMessage = message;
+    },
+    displayStats(stats: { string: string }) {
+      this.stats = stats;
+      console.log('stats', stats)
     }
   },
   emits: ['finished']
@@ -35,9 +90,20 @@ export default {
             hint="Select a file"
             persistent-hint
             prepend-icon="mdi-paperclip"
-            accept="application/json"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
         ></v-file-input>
-        <v-btn @click="importFile">Import</v-btn>
+      <v-card-actions>
+        <v-checkbox v-model="dryRun" label="Dry run"></v-checkbox>
+        <v-checkbox v-model="overwrite" label="Overwrite"></v-checkbox>
+        <v-form>
+          <v-btn @click="$emit('finished')" color="secondary" variant="plain">Close</v-btn>
+          <v-btn @click="importFile" color="primary" variant="flat">Import</v-btn>
+        </v-form>
+      </v-card-actions>
+      <VCardText>
+        <v-alert v-if="errorMessage" type="error">{{errorMessage}}</v-alert>
+        <v-alert v-if="stats" type="info">{{stats}}</v-alert>
+      </VCardText>
 
     </v-card>
   </v-container>

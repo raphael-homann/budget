@@ -49,9 +49,7 @@ export default BudgetComponent;
 <template>
 
   <v-dialog v-model="showImportModal" max-width="500" @close="showImportModal=false">
-    x
     <import-modal :budget-id="budgetId" @finished="showImportModal=false"></import-modal>
-    x
   </v-dialog>
 
 

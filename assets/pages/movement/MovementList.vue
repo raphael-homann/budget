@@ -16,7 +16,14 @@
                              @save="movementModal=null"></bg-movement-edit-form>
     </v-dialog>
 
+
+    <v-dialog v-model="showImportModal" max-width="500" @close="showImportModal=false">
+      <import-modal :budget-id="budgetId" @finished="showImportModal=false"></import-modal>
+    </v-dialog>
+
+
     <v-btn @click="create" color="primary">Ajouter</v-btn>
+    <v-btn @click="showImportModal=true">Importer</v-btn>
 
     <v-data-table
         :headers="headers"
@@ -27,6 +34,12 @@
       <template v-slot:item.actions="{ item }">
         <v-icon @click="movementModal=item.clone()">mdi-pencil</v-icon>
         <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>
+      </template>
+
+      <template v-slot:item.amount="{ item }">
+        <v-icon v-if="item.amount>0" color="green">mdi-plus</v-icon>
+        <v-icon v-else color="red">mdi-minus</v-icon>
+            {{item.amount}}
       </template>
 
       <template v-slot:item.category="{ item }">
@@ -67,13 +80,14 @@ import FieldSort from "@efrogg/synergy/Data/Criteria/Sort/FieldSort";
 import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEvent";
 import Category from "../../Data/Entity/Category";
 import BgCategoryEditForm from "../../Data/Form/BgCategoryEditForm.vue";
+import ImportModal from "../../component/import-modal.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const movementRepository = entityManager.getRepository(Movement);
 const budgetRepository = entityManager.getRepository(Budget);
 
 const MovementList = defineComponent({
-  components: {BgCategoryEditForm, BgMovementEditForm},
+  components: {ImportModal, BgCategoryEditForm, BgMovementEditForm},
   data(): {
     currentCategorySearch: string,
     currentMovement: Movement|null,
@@ -84,7 +98,8 @@ const MovementList = defineComponent({
     entityManager: EntityManager,
     budgetId: null | number,
     budget: null | Budget,
-    headers: { title: string, value: string, sortable?: boolean }[]
+    headers: { title: string, value: string, sortable?: boolean }[],
+    showImportModal: boolean
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
@@ -102,7 +117,8 @@ const MovementList = defineComponent({
         {title: 'Catégorie', value: 'category', sortable: false},
         {title: 'Enveloppe', value: 'category.envelope.name', sortable: false},
         {title: 'Actions', value: 'actions', sortable: false},
-      ]
+      ],
+      showImportModal: false
     }
   }, computed: {
     categories() {
