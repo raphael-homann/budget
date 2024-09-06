@@ -44,6 +44,12 @@ Encore
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
+    .configureTerserPlugin((options) => {
+        // @see https://webpack.js.org/plugins/terser-webpack-plugin/#terseroptions
+        options.terserOptions = {
+            keep_fnames: true,  // !!! nécessaire pour synergyTS
+        };
+    })
     .enableVueLoader((vueConfig) => {
         vueConfig.esModule = true
     })
