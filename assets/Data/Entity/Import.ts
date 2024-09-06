@@ -7,6 +7,7 @@ export default class Import extends Entity  {
     public fileName: string = '';
     private _budgetId: string | null = null;
     private _budget: Budget | null = null;
+    public clear: boolean = true;
     // ---properties---  ! keep this line
 
     public get budgetId(): string | null {

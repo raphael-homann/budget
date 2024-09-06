@@ -36,6 +36,7 @@ class ImportCommand extends Command
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Perform a dry-run');
         // budget option
         $this->addOption('budget-id', null, InputOption::VALUE_REQUIRED, 'The budget to import the movements to');
+        $this->addOption('clear', null, InputOption::VALUE_NONE, 'Clear all movements before importing');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -43,11 +44,18 @@ class ImportCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $this->movementImporter->setDryRun($input->getOption('dry-run'));
+        $this->movementImporter->setClear($input->getOption('clear'));
         $budget = $this->budgetRepository->find($input->getOption('budget-id'))
             ?? throw new \InvalidArgumentException('Budget not found');
 
-        $this->movementImporter->import($input->getArgument('file'),$budget);
+        $stats = $this->movementImporter->import($input->getArgument('file'),$budget);
 
+        $io->table([],[
+            ['Imported',$stats->getImported()],
+            ['Skipped',$stats->getSkipped()],
+        ]);
+        $io->success(sprintf('Imported %d movements',$stats->getImported()));
+        $io->info(sprintf('Skipped %d movements',$stats->getSkipped()));
 
         return self::SUCCESS;
     }

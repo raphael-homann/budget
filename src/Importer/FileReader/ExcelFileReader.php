@@ -19,6 +19,10 @@ class ExcelFileReader implements FileReaderInterface
     {
         $xls = SimpleXLSX::parseFile( $this->filename, $debug = false );
 
+        if(!$xls) {
+            throw new \InvalidArgumentException('Invalid file');
+        }
+
         foreach ($xls->rows() as $row) {
             yield $row;
         }

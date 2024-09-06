@@ -1,0 +1,119 @@
+<template>
+  <v-dialog v-model="budgetModal" width="auto" :close-on-back="false">
+    <bg-budget-edit-form
+        :budget="budgetModal"
+        :entity-manager="props.entityManager"
+        @close="budgetModal=null"
+        @save="onBudgetSaved"
+    />
+  </v-dialog>
+
+  <v-card v-if="import" :title="modalTitle(import)">
+    <v-card-text>
+
+      <!--fileName-->
+      <v-text-field v-model.number="import.fileName"
+                    :label="t('budget.entities.Import.fields.fileName')" required>
+      </v-text-field>
+
+      <!--clear-->
+      <v-text-field v-model.number="import.clear"
+                    :label="t('budget.entities.Import.fields.clear')" required>
+      </v-text-field>
+
+      <!-- budget -->
+      <v-row justify="end" v-if="budgetRepository">
+        <v-col cols="8">
+          <v-autocomplete
+              :items="budgetRepository.getItems()"
+              item-title="name"
+              item-value="id"
+              v-model="import.budgetId"
+              :label="t('budget.entities.Import.fields.budget')"
+              required
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="4">
+          <v-btn icon='mdi-plus-thick' @click="budgetModal=new Budget()" variant="tonal" color="primary"
+                 size="small"></v-btn>
+          <v-btn v-if="import.budget" icon='mdi-pencil' @click="editBudget" variant="tonal"
+                 color="secondary" size="small"></v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+
+    <v-card-actions>
+      <v-container>
+        <v-row justify="end">
+          <v-btn prepend-icon="mdi-close" color="grey" @click="close()">Fermer</v-btn>
+          <v-btn prepend-icon="mdi-check" color="primary" @click="save()">Enregistrer</v-btn>
+        </v-row>
+      </v-container>
+    </v-card-actions>
+  </v-card>
+</template>
+<script setup lang="ts">
+import Import from "../Entity/Import";
+import {useLocale} from "vuetify";
+import Entity from "@efrogg/synergy/Data/Entity";
+// import SpDateField from "../Form/SpDateField.vue";
+import {onMounted, ref, Ref} from "vue";
+import EntityManager from "@efrogg/synergy/Data/EntityManager";
+import Repository from "@efrogg/synergy/Data/Repository";
+
+// budget imports
+import Budget from "../Entity/Budget";
+import BgBudgetEditForm from "./BgBudgetEditForm.vue";
+
+const budgetModal: Ref<Budget | null> = ref(null);
+let budgetRepository: Repository<Budget> | null = null;
+
+const props = defineProps({
+  entityManager: {
+    type: EntityManager,
+    required: true
+  },
+  import: {
+    type: Import,
+    required: true
+  }
+})
+const {t} = useLocale()
+const emit = defineEmits(['close', 'save']);
+
+function close() {
+  emit('close')
+}
+
+onMounted(() => {
+  budgetRepository = props.entityManager.getRepository(Budget)
+})
+
+function modalTitle(entity: Entity): string {
+  let className = entity.constructor.name;
+  return entity.getId()
+      ? t('budget.entities.' + className + '.listing.edit')
+      : t('budget.entities.' + className + '.listing.add');
+}
+
+function save() {
+  props.entityManager
+      .save(props.import)
+      .then(() => {
+        emit('save', props.import);
+      })
+      .catch((e: any) => {
+        console.error(e);
+      });
+}
+
+function editBudget() {
+  budgetModal.value = budgetRepository?.get(props.import.budgetId)?.clone() ?? null
+}
+
+function onBudgetSaved(budget: Budget) {
+  props.import.budgetId = budget.getId();
+  budgetModal.value = null;
+}
+
+</script>

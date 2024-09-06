@@ -30,6 +30,9 @@ class Import extends AbstractSynergyBudgetEntity
     #[ORM\JoinColumn(nullable: false)]
     private ?Budget $budget = null;
 
+    #[ORM\Column]
+    private ?bool $clear = null;
+
     public function __construct()
     {
         $this->movements = new ArrayCollection();
@@ -87,6 +90,18 @@ class Import extends AbstractSynergyBudgetEntity
     public function setBudget(?Budget $budget): static
     {
         $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function isClear(): ?bool
+    {
+        return $this->clear;
+    }
+
+    public function setClear(bool $clear): static
+    {
+        $this->clear = $clear;
 
         return $this;
     }

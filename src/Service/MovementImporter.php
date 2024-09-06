@@ -9,6 +9,7 @@ use App\Helper\DryRunTrait;
 use App\Importer\CreditAgricoleImporter;
 use App\Importer\FileReader\FileReaderFactory;
 use App\Importer\ImportStats;
+use App\Repository\MovementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -17,6 +18,7 @@ class MovementImporter
 {
     use DryRunTrait;
 
+    private bool $clear = false;
 
     public function __construct(
         private readonly string $importBasePath,
@@ -24,6 +26,7 @@ class MovementImporter
         private readonly CreditAgricoleImporter $creditAgricoleImporter,
         private readonly FileReaderFactory $fileReaderFactory,
         private readonly EntityManagerInterface $entityManager,
+        private readonly MovementRepository $movementRepository,
     ) {
     }
 
@@ -33,6 +36,14 @@ class MovementImporter
     public function getImportBasePath(): string
     {
         return $this->importBasePath;
+    }
+
+    /**
+     * @param bool $clear
+     */
+    public function setClear(bool $clear): void
+    {
+        $this->clear = $clear;
     }
 
     public function import(string $file,Budget $budget): ImportStats
@@ -45,7 +56,6 @@ class MovementImporter
 
         if ($this->isDryRun()) {
             $this->logger->info('Dry-run: Importing file ' . $file);
-            $stats;
         }
 
         $this->logger->info('Importing file ' . $file);
@@ -57,9 +67,19 @@ class MovementImporter
         $import = new Import();
         $import->setFileName($file);
         $import->setBudget($budget);
+        $import->setClear($this->clear);
         $this->entityManager->persist($import);
         $this->entityManager->flush();
 
+        if ($this->clear) {
+            $this->logger->warning('Clearing all movements');
+            $movements = $this->movementRepository->findBy(['budget' => $budget]);
+            $this->logger->info('found ' . count($movements) . ' movements');
+            array_map(fn(Movement $movement) => $this->entityManager->remove($movement), $movements);
+        }
+        $this->entityManager->flush();
+
+        $this->logger->notice('importing movements');
         //TODO : guess the importer based on the file reader
         foreach ($this->creditAgricoleImporter->getMovements($fileReader) as $movement) {
             $movement->setBudget($budget);
