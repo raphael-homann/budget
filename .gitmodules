@@ -1,0 +1,9 @@
+[submodule "custom/composer-src/SynergyTS-bundle"]
+	path = custom/composer-src/SynergyTS-bundle
+	url = git@github.com:e-frogg/SynergyTS-bundle.git
+[submodule "custom/composer-src/SynergyTS-maker-bundle"]
+	path = custom/composer-src/SynergyTS-maker-bundle
+	url = git@github.com:e-frogg/SynergyTS-maker-bundle.git
+[submodule "custom/npm-src/SynergyTS-npm"]
+	path = custom/npm-src/SynergyTS-npm
+	url = git@github.com:e-frogg/SynergyTS-npm.git
