@@ -2,13 +2,13 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.e3fd6398.js",
-        "/build/168.0c211255.js",
-        "/build/app.37d4e788.js"
+        "https://budget.e-frogg.docker:9997/build/runtime.js",
+        "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-4e778b.js",
+        "https://budget.e-frogg.docker:9997/build/app.js"
       ],
       "css": [
-        "/build/168.f397b9e9.css",
-        "/build/app.31d6cfe0.css"
+        "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-4e778b.css",
+        "https://budget.e-frogg.docker:9997/build/app.css"
       ]
     }
   }

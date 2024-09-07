@@ -31,9 +31,16 @@ class Category extends AbstractSynergyBudgetEntity
     #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'category')]
     private Collection $movements;
 
+    /**
+     * @var Collection<int, DetectionMask>
+     */
+    #[ORM\OneToMany(targetEntity: DetectionMask::class, mappedBy: 'category', orphanRemoval: true)]
+    private Collection $detectionMasks;
+
     public function __construct()
     {
         $this->movements = new ArrayCollection();
+        $this->detectionMasks = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -96,6 +103,36 @@ class Category extends AbstractSynergyBudgetEntity
             // set the owning side to null (unless already changed)
             if ($movement->getCategory() === $this) {
                 $movement->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DetectionMask>
+     */
+    public function getDetectionMasks(): Collection
+    {
+        return $this->detectionMasks;
+    }
+
+    public function addDetectionMask(DetectionMask $detectionMask): static
+    {
+        if (!$this->detectionMasks->contains($detectionMask)) {
+            $this->detectionMasks->add($detectionMask);
+            $detectionMask->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetectionMask(DetectionMask $detectionMask): static
+    {
+        if ($this->detectionMasks->removeElement($detectionMask)) {
+            // set the owning side to null (unless already changed)
+            if ($detectionMask->getCategory() === $this) {
+                $detectionMask->setCategory(null);
             }
         }
 

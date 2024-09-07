@@ -4,7 +4,8 @@ import Budget from "../Data/Entity/Budget";
 import Envelope from "../Data/Entity/Envelope";
 import Category from "../Data/Entity/Category";
 import Movement from "../Data/Entity/Movement";
+import DetectionMask from "../Data/Entity/DetectionMask";
 
 export const globalEntityManager: EntityManager = new EntityManager(
-    new RepositoryManager([Budget,Envelope, Category, Movement])
+    new RepositoryManager([Budget,Envelope, Category, Movement, DetectionMask])
 );

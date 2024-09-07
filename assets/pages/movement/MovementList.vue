@@ -1,7 +1,25 @@
 <template>
+  <v-navigation-drawer
+      location="right"
+      :mobile="false"
+      permanent
+      expand-on-hover
+      color="primary"
+  >
+    <bg-detection-mask-list v-if=budget :budget="budget" :entity-manager="entityManager"></bg-detection-mask-list>
+  </v-navigation-drawer>
+
   <h1>edit movements (budget : {{ budget?.name }} {{ budget?.id }})</h1>
+
   <v-container>
 
+    <v-dialog v-model="detectionMaskMovement" width="auto" :close-on-back="false">
+      {{detectionMaskMovement?.comment}}
+<!--      <bg-detection-mask-for-movement-->
+<!--          :movement="detectionMaskMovement"-->
+<!--          @close="detectionMaskMovement=null"-->
+<!--      ></bg-detection-mask-for-movement>-->
+    </v-dialog>
     <v-dialog v-model="categoryModal" width="auto" :close-on-back="false">
       <bg-category-edit-form
           :category="categoryModal"
@@ -16,24 +34,27 @@
                              @save="movementModal=null"></bg-movement-edit-form>
     </v-dialog>
 
-
     <v-dialog v-model="showImportModal" max-width="500" @close="showImportModal=false">
       <import-modal :budget-id="budgetId" @finished="showImportModal=false"></import-modal>
     </v-dialog>
+
+
 
 
     <v-btn @click="create" color="primary">Ajouter</v-btn>
     <v-btn @click="showImportModal=true">Importer</v-btn>
 
     <v-data-table
+        density="compact"
         :headers="headers"
         :items="movements"
         :items-per-page="25"
         class="elevation-1"
     >
-      <template v-slot:item.actions="{ item }">
-        <v-icon @click="movementModal=item.clone()">mdi-pencil</v-icon>
-        <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>
+      <template v-slot:item.actions="{ movement }">
+        <v-icon @click="openDetectionMask(movement)">mdi-infinity</v-icon>
+        <v-icon @click="movementModal=movement.clone()">mdi-pencil</v-icon>
+        <v-icon @click="deleteMovement(movement)">mdi-delete</v-icon>
       </template>
 
       <template v-slot:item.amount="{ item }">
@@ -81,16 +102,18 @@ import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEven
 import Category from "../../Data/Entity/Category";
 import BgCategoryEditForm from "../../Data/Form/BgCategoryEditForm.vue";
 import ImportModal from "../../component/import-modal.vue";
+import BgDetectionMaskList from "../../component/detection-mask-list.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const movementRepository = entityManager.getRepository(Movement);
 const budgetRepository = entityManager.getRepository(Budget);
 
 const MovementList = defineComponent({
-  components: {ImportModal, BgCategoryEditForm, BgMovementEditForm},
+  components: {BgDetectionMaskList, ImportModal, BgCategoryEditForm, BgMovementEditForm},
   data(): {
     currentCategorySearch: string,
     currentMovement: Movement|null,
+    detectionMaskMovement: Movement|null,
 
     movements: Movement[],
     movementModal: null | Movement,
@@ -104,6 +127,7 @@ const MovementList = defineComponent({
     let entityManager: EntityManager = store.entityManager;
     return {
       currentCategorySearch: '',
+      detectionMaskMovement: null,
       currentMovement: null,
       movements: [],
       movementModal: null,
@@ -126,8 +150,10 @@ const MovementList = defineComponent({
     }
   },
   methods: {
+    openDetectionMask(movement: Movement) {
+      this.detectionMaskMovement = movement;
+    },
     initMovements() {
-      console.log('initMovements', this.budgetId)
       if (this.budgetId) {
         let criteria = new Criteria();
         criteria
@@ -168,7 +194,6 @@ const MovementList = defineComponent({
     initBudget() {
       if (this.budgetId) {
         this.budget = budgetRepository.get(this.budgetId);
-        console.log('this.budget', this.budget)
       }
     },
     deleteMovement(movement: Movement) {

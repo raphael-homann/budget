@@ -33,7 +33,7 @@ class BudgetDataController extends AbstractController
 
         $criteria = new Criteria();
         $criteria->addAssociation('envelopes');
-        $criteria->addAssociation('categories');
+        $criteria->addAssociation('categories.detectionMasks');
         $criteria->addAssociation('movements');
 //        $criteria->addFilter('users', $user->getId());
         $budgets = $this->entityRepositoryHelper->search(Budget::class, $criteria);

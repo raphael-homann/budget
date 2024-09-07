@@ -12,6 +12,18 @@ export const fr = {
             home: 'Accueil',
         },
         entities: {
+            DetectionMask:{
+                listing:{
+                    edit: 'Editer détection',
+                    add: 'Ajouter détection',
+                },
+                fields:{
+                    mask: 'masque',
+                    score: 'score',
+                    active: 'active',
+                    category: 'catégorie',
+                }
+            },
             Budget:{
                 listing:{
                     edit: 'Editer budget',

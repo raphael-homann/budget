@@ -1,6 +1,7 @@
 import Entity from "@efrogg/synergy/Data/Entity";
 import Budget from "./Budget";
 import Envelope from "./Envelope";
+import DetectionMask from "./DetectionMask";
 // --imports--  ! keep this line
 
 export default class Category extends Entity  {
@@ -39,5 +40,16 @@ export default class Category extends Entity  {
         return this._envelope ??= this.getRelation(Envelope, this.envelopeId);
     }
 
+    public get detectionMasks(): DetectionMask[] {
+        return this.getOneToMany(DetectionMask, 'categoryId');
+    }
+    public set detectionMasks( masks    )
+    {
+        console.error('no set detectionMasks ')
+    }
     // ---methods--- ! keep this line
+
+    hasDetectionMasks() {
+        return this.detectionMasks.length > 0;
+    }
 }
