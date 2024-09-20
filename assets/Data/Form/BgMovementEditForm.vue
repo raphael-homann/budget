@@ -12,12 +12,17 @@
     <v-card-text>
 
       <!--amount-->
-      <v-text-field v-model.number="movement.amount"
+      <v-text-field  v-model="movement.amount"
                     :label="t('budget.entities.Movement.fields.amount')" required>
       </v-text-field>
 
+      <!--label-->
+      <v-text-field  v-model="movement.label"
+                    :label="t('budget.entities.Movement.fields.label')" required>
+      </v-text-field>
+
       <!--comment-->
-      <v-text-field v-model.number="movement.comment"
+      <v-text-field  v-model="movement.comment"
                     :label="t('budget.entities.Movement.fields.comment')" required>
       </v-text-field>
 

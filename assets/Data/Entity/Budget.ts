@@ -15,6 +15,6 @@ export default class Budget extends Entity  {
     }
 
     set categories(value: Category[]) {
-        console.error('categories is a read only property');
+        console.warn('categories is a read only property');
     }
 }

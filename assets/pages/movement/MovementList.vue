@@ -13,13 +13,22 @@
 
   <v-container>
 
-    <v-dialog v-model="detectionMaskMovement" width="auto" :close-on-back="false">
-      {{detectionMaskMovement?.comment}}
+    <v-dialog v-model="detectionMaskModal" width="auto" :close-on-back="false">
+      <bg-detection-mask-edit-form v-if="detectionMaskModal"
+                                   :detection-mask="detectionMaskModal"
+                                   :entity-manager="entityManager"
+                                   @close="detectionMaskModal=null"
+      />
+
+    </v-dialog>
+
+    <!--    <v-dialog v-model="detectionMaskMovement" width="auto" :close-on-back="false">-->
+    <!--      {{detectionMaskMovement?.label}}-->
 <!--      <bg-detection-mask-for-movement-->
 <!--          :movement="detectionMaskMovement"-->
 <!--          @close="detectionMaskMovement=null"-->
 <!--      ></bg-detection-mask-for-movement>-->
-    </v-dialog>
+    <!--    </v-dialog>-->
     <v-dialog v-model="categoryModal" width="auto" :close-on-back="false">
       <bg-category-edit-form
           :category="categoryModal"
@@ -51,21 +60,24 @@
         :items-per-page="25"
         class="elevation-1"
     >
-      <template v-slot:item.actions="{ movement }">
-        <v-icon @click="openDetectionMask(movement)">mdi-infinity</v-icon>
-        <v-icon @click="movementModal=movement.clone()">mdi-pencil</v-icon>
-        <v-icon @click="deleteMovement(movement)">mdi-delete</v-icon>
+      <template v-slot:item.actions="{ item }">
+        <v-icon @click="openDetectionMask(item)" :icon="item.detectionMask?'mdi-star':'mdi-star-outline'"/>
+        <v-icon @click="console.log(item);movementModal=item.clone()">mdi-pencil</v-icon>
+        <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>
       </template>
 
+      <template v-slot:item.date="{ item, value }">
+        {{ formatDate(value) }}
+      </template>
       <template v-slot:item.amount="{ item }">
         <v-icon v-if="item.amount>0" color="green">mdi-plus</v-icon>
         <v-icon v-else color="red">mdi-minus</v-icon>
-            {{item.amount}}
+        {{ item.amount }}
       </template>
 
       <template v-slot:item.category="{ item }">
-        {{ item.category?.name }}
         <v-autocomplete
+            density="compact"
             :items="categories"
             item-title="name"
             item-value="id"
@@ -103,13 +115,16 @@ import Category from "../../Data/Entity/Category";
 import BgCategoryEditForm from "../../Data/Form/BgCategoryEditForm.vue";
 import ImportModal from "../../component/import-modal.vue";
 import BgDetectionMaskList from "../../component/detection-mask-list.vue";
+import DetectionMask from "../../Data/Entity/DetectionMask";
+import BgDetectionMaskEditForm from "../../Data/Form/BgDetectionMaskEditForm.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const movementRepository = entityManager.getRepository(Movement);
 const budgetRepository = entityManager.getRepository(Budget);
 
+type DataTableHeader = { title: string, value: string, sortable?: boolean, width?: string | number };
 const MovementList = defineComponent({
-  components: {BgDetectionMaskList, ImportModal, BgCategoryEditForm, BgMovementEditForm},
+  components: {BgDetectionMaskEditForm, BgDetectionMaskList, ImportModal, BgCategoryEditForm, BgMovementEditForm},
   data(): {
     currentCategorySearch: string,
     currentMovement: Movement|null,
@@ -118,16 +133,18 @@ const MovementList = defineComponent({
     movements: Movement[],
     movementModal: null | Movement,
     categoryModal: null | Category
+    detectionMaskModal: null | DetectionMask
     entityManager: EntityManager,
     budgetId: null | number,
     budget: null | Budget,
-    headers: { title: string, value: string, sortable?: boolean }[],
+    headers: DataTableHeader[],
     showImportModal: boolean
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
       currentCategorySearch: '',
       detectionMaskMovement: null,
+      detectionMaskModal: null,
       currentMovement: null,
       movements: [],
       movementModal: null,
@@ -136,11 +153,12 @@ const MovementList = defineComponent({
       budgetId: null,
       budget: null,
       headers: [
-        {title: 'Amount', value: 'amount'},
-        {title: 'Commentaire', value: 'comment'},
-        {title: 'Catégorie', value: 'category', sortable: false},
-        {title: 'Enveloppe', value: 'category.envelope.name', sortable: false},
-        {title: 'Actions', value: 'actions', sortable: false},
+        {title: 'Amount', value: 'amount', width: "1"},
+        {title: 'Date', value: 'date', width: "1"},
+        {title: 'Libellé', value: 'label', width: "3"},
+        {title: 'Catégorie', value: 'category', sortable: false, width: "1"},
+        {title: 'Enveloppe', value: 'category.envelope.name', sortable: false, width: "1"},
+        {title: 'Actions', value: 'actions', sortable: false, width: "1"},
       ],
       showImportModal: false
     }
@@ -150,8 +168,19 @@ const MovementList = defineComponent({
     }
   },
   methods: {
+    formatDate(date: string) {
+      return new Date(date).toLocaleDateString();
+    },
     openDetectionMask(movement: Movement) {
-      this.detectionMaskMovement = movement;
+      if (movement.detectionMask) {
+        this.detectionMaskModal = movement.detectionMask;
+      } else {
+        let detectionMask = new DetectionMask();
+        detectionMask.score = 100;
+        detectionMask.mask = movement.label;
+        detectionMask.categoryId = movement.categoryId;
+        this.detectionMaskModal = detectionMask;
+      }
     },
     initMovements() {
       if (this.budgetId) {
@@ -227,6 +256,7 @@ const MovementList = defineComponent({
   mounted() {
     this.budgetId = parseInt(this.$route.params.budgetId);
     this.bindRepository()
+    this.initBudget();
     this.initMovements();
   },
 });

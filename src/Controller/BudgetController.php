@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\DetectionMask\DetectionExecutor;
 use App\Repository\BudgetRepository;
+use App\Repository\DetectionMaskRepository;
 use App\Service\MovementImporter;
 use Exception;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,6 +26,35 @@ class BudgetController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws JsonException
+     */
+    #[Route('/{budgetId}/executeDetection/{detectionId}', name: 'app_budget_execute_detection', methods: ['POST'], priority: 2)]
+    public function executeDetections(
+        Request $request,
+        DetectionExecutor $detectionExecutor,
+        BudgetRepository $budgetRepository,
+        DetectionMaskRepository $detectionMaskRepository,
+        int $budgetId,
+        ?int $detectionId = null
+    ): JsonResponse {
+        $body = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $onlyUncategorized = $body['onlyUncategorized'] ?? true;
+        $simulation = $body['simulation'] ?? false;
+
+        $result = $detectionExecutor->executeDetection($budgetId, $detectionId, null,$onlyUncategorized, $simulation);
+
+        return new JsonResponse([
+            'body' => $body,
+            'result' => $result,
+            'status' => 'ok',
+            'message' => 'Detection executed',
+            'budgetId' => $budgetId,
+            'detectionId' => $detectionId,
+            'onlyUncategorized' => $onlyUncategorized,
+        ]);
+    }
+
     #[Route('/import', name: 'app_budget_import', methods: ['POST'], priority: 2)]
     public function import(Request $request, MovementImporter $importer, BudgetRepository $budgetRepository): JsonResponse
     {
@@ -32,8 +64,8 @@ class BudgetController extends AbstractController
             $dryRun = $request->request->getBoolean('dry-run');
             $overwrite = $request->request->getBoolean('overwrite');
             $importer->setDryRun($dryRun);
-            $bugetId = $request->get('budget-id') ?? throw new \InvalidArgumentException('budget-id is not provided');
-            $budget = $budgetRepository->find($bugetId) ?? throw new \InvalidArgumentException('Budget not found');// move the file to a temporary location
+            $budgetId = $request->get('budget-id') ?? throw new \InvalidArgumentException('budget-id is not provided');
+            $budget = $budgetRepository->find($budgetId) ?? throw new \InvalidArgumentException('Budget not found');// move the file to a temporary location
             //        $importName = random_int(1000,9999).'-'.$file->getClientOriginalName();
             $importName = $budget->getId() . '-' . $file->getClientOriginalName();
             if (file_exists($importer->getImportBasePath() . '/' . $importName)) {

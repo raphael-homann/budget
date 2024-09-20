@@ -20,7 +20,7 @@
     <v-card-text>
 
       <!--name-->
-      <v-text-field v-model.number="category.name"
+      <v-text-field  v-model="category.name"
                     :label="t('budget.entities.Category.fields.name')" required>
       </v-text-field>
 

@@ -9,6 +9,11 @@ parameters:
         create: true
         update: true
         delete: true
+
+    env(REDIS_HOST): 'redis'
+    env(REDIS_PORT): '6379'
+    env(REDIS_DB): '1'
+
 #    synergy.grants.entity:
 #        Budget:
 #            read: true
@@ -38,3 +43,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\AutoSync\AutoSyncPersister:
+
+    Efrogg\Synergy\AutoSync\Persister\AutoSyncPersisterInterface:
+        alias: App\AutoSync\AutoSyncPersister

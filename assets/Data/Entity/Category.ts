@@ -45,7 +45,7 @@ export default class Category extends Entity  {
     }
     public set detectionMasks( masks    )
     {
-        console.error('no set detectionMasks ')
+        console.warn('detectionMasks is a read only property');
     }
     // ---methods--- ! keep this line
 

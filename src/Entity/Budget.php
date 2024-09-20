@@ -40,7 +40,7 @@ class Budget extends AbstractSynergyBudgetEntity
     private Collection $categories;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
+    private string $description = '';
 
     /**
      * @var Collection<int, Movement>
@@ -152,7 +152,7 @@ class Budget extends AbstractSynergyBudgetEntity
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }

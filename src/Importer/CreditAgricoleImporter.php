@@ -19,7 +19,10 @@ class CreditAgricoleImporter implements ImporterInterface, LoggerAwareInterface
     const string HEADER_DEBT = 'Débit euros';
     const string HEADER_CREDIT = 'Crédit euros';
 
-    private const HEADERS = [self::HEADER_DATE, self::HEADER_LABEL];
+    private const array HEADERS = [self::HEADER_DATE, self::HEADER_LABEL];
+    /**
+     * @var array<string>
+     */
     protected array $headers;
 
     /**
@@ -52,7 +55,7 @@ class CreditAgricoleImporter implements ImporterInterface, LoggerAwareInterface
 
             $movement = new Movement();
             $movement->setDate($date);
-            $movement->setComment($label);
+            $movement->setLabel($label);
             $movement->setAmount($amount);
 
             yield $movement;
@@ -60,14 +63,23 @@ class CreditAgricoleImporter implements ImporterInterface, LoggerAwareInterface
     }
 
 
+    /**
+     * @param array<string> $row
+     *
+     * @return bool
+     * return true when the header is found
+     * return false when the header is not found, event for the header row
+     */
     private function waitForHeader(array $row): bool
     {
         if (isset($this->headers)) {
             return true;
         }
-        if (in_array(self::HEADER_DATE, $row, true) && in_array(self::HEADER_LABEL, $row, true)) {
+        // check if all headers are present
+        $presentHeaders = array_intersect($row, self::HEADERS);
+        if (count($presentHeaders) === count(self::HEADERS)) {
             $this->headers = $row;
-            return false;
+            // return false to skip the header row
         }
         return false;
     }

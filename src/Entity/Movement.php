@@ -21,7 +21,10 @@ class Movement extends AbstractSynergyBudgetEntity
     private ?Category $category = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $comment = null;
+    private ?string $label = null;
+
+    #[ORM\Column(length: 255)]
+    private string $comment = '';
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
@@ -32,6 +35,9 @@ class Movement extends AbstractSynergyBudgetEntity
 
     #[ORM\ManyToOne(inversedBy: 'movements')]
     private ?Import $import = null;
+
+    #[ORM\ManyToOne]
+    private ?DetectionMask $detectionMask = null;
 
     public function getAmount(): ?float
     {
@@ -57,7 +63,19 @@ class Movement extends AbstractSynergyBudgetEntity
         return $this;
     }
 
-    public function getComment(): ?string
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): void
+    {
+        $this->label = $label;
+    }
+
+
+
+    public function getComment(): string
     {
         return $this->comment;
     }
@@ -101,6 +119,18 @@ class Movement extends AbstractSynergyBudgetEntity
     public function setImport(?Import $import): static
     {
         $this->import = $import;
+
+        return $this;
+    }
+
+    public function getDetectionMask(): ?DetectionMask
+    {
+        return $this->detectionMask;
+    }
+
+    public function setDetectionMask(?DetectionMask $detectionMask): static
+    {
+        $this->detectionMask = $detectionMask;
 
         return $this;
     }

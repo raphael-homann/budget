@@ -24,7 +24,8 @@ class EntityLifeCycleEventListener
         $user = $this->security->getUser();
 
         if (!$user instanceof User) {
-            throw new \RuntimeException('No user found');
+//            throw new \RuntimeException('No user found');
+            return;
         }
 
         $budget->addUser($user);

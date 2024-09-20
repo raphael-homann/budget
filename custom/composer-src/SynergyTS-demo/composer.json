@@ -1,0 +1,23 @@
+{
+  "name": "efrogg/synergy-demo",
+  "version": "0.0.1",
+  "description": "A simple demo for SynergyTS",
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "Efrogg\\SynergyDemo\\": "src/"
+    },
+    "files": []
+  },
+  "require": {
+    "php": ">=8.0.0",
+    "efrogg/synergy-bundle": "^0.0",
+    "efrogg/synergy-maker-bundle": "^0.0"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
+  }
+}

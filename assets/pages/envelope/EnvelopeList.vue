@@ -1,5 +1,5 @@
 <template>
-  <h1>edit envelopes (budget : {{ budget?.name }} {{ budget?.id }}</h1>
+  <h1>edit envelopes (budget : {{ budget?.name }})</h1>
   <v-container>
 
     <v-dialog :model-value="envelopeModal" max-width="500">
@@ -120,6 +120,7 @@ const EnvelopeList = defineComponent({
   mounted() {
     this.budgetId = parseInt(this.$route.params.budgetId);
     this.bindRepository()
+    this.initBudget();
     this.initEnvelopes();
   },
 });

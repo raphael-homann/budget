@@ -7,6 +7,14 @@
         @save="onCategorySaved"
     />
   </v-dialog>
+  <v-dialog v-model="budgetModal" width="auto" :close-on-back="false">
+    <bg-budget-edit-form
+        :budget="budgetModal"
+        :entity-manager="props.entityManager"
+        @close="budgetModal=null"
+        @save="onBudgetSaved"
+    />
+  </v-dialog>
 
   <v-card v-if="detectionMask" :title="modalTitle(detectionMask)">
     <v-card-text>
@@ -17,7 +25,7 @@
       </v-text-field>
 
       <!--score-->
-      <v-text-field type="number" v-model.number="detectionMask.score"
+      <v-text-field type="number"   v-model.number="detectionMask.score"
                     :label="t('budget.entities.DetectionMask.fields.score')" required>
       </v-text-field>
 
@@ -50,12 +58,31 @@
                  color="secondary" size="small"></v-btn>
         </v-col>
       </v-row>
+
+      <!-- budget -->
+      <v-row justify="end" v-if="budgetRepository">
+        <v-col cols="8">
+          <v-autocomplete
+              :items="budgetRepository.getItems()"
+              item-title="name"
+              item-value="id"
+              v-model="detectionMask.budgetId"
+              :label="t('budget.entities.DetectionMask.fields.budget')"
+              required
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="4">
+          <v-btn icon='mdi-plus-thick' @click="budgetModal=new Budget()" variant="tonal" color="primary"
+                 size="small"></v-btn>
+          <v-btn v-if="detectionMask.budget" icon='mdi-pencil' @click="editBudget" variant="tonal"
+                 color="secondary" size="small"></v-btn>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-card-actions>
       <v-container>
         <v-row justify="end">
-          <v-btn v-if="detectionMask.getId()" prepend-icon="mdi-play" color="success" @click="$emit('play')">Exécuter</v-btn>
           <v-btn prepend-icon="mdi-close" color="grey" @click="close()">Fermer</v-btn>
           <v-btn prepend-icon="mdi-check" color="primary" @click="save()">Enregistrer</v-btn>
         </v-row>
@@ -75,9 +102,14 @@ import Repository from "@efrogg/synergy/Data/Repository";
 // category imports
 import Category from "../Entity/Category";
 import BgCategoryEditForm from "./BgCategoryEditForm.vue";
+// budget imports
+import Budget from "../Entity/Budget";
+import BgBudgetEditForm from "./BgBudgetEditForm.vue";
 
 const categoryModal: Ref<Category | null> = ref(null);
 let categoryRepository: Repository<Category> | null = null;
+const budgetModal: Ref<Budget | null> = ref(null);
+let budgetRepository: Repository<Budget> | null = null;
 
 const props = defineProps({
   entityManager: {
@@ -90,7 +122,7 @@ const props = defineProps({
   }
 })
 const {t} = useLocale()
-const emit = defineEmits(['close', 'save','play']);
+const emit = defineEmits(['close', 'save']);
 
 function close() {
   emit('close')
@@ -98,6 +130,7 @@ function close() {
 
 onMounted(() => {
   categoryRepository = props.entityManager.getRepository(Category)
+  budgetRepository = props.entityManager.getRepository(Budget)
 })
 
 function modalTitle(entity: Entity): string {
@@ -125,6 +158,14 @@ function editCategory() {
 function onCategorySaved(category: Category) {
   props.detectionMask.categoryId = category.getId();
   categoryModal.value = null;
+}
+function editBudget() {
+  budgetModal.value = budgetRepository?.get(props.detectionMask.budgetId)?.clone() ?? null
+}
+
+function onBudgetSaved(budget: Budget) {
+  props.detectionMask.budgetId = budget.getId();
+  budgetModal.value = null;
 }
 
 </script>

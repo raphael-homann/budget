@@ -22,6 +22,7 @@ export const fr = {
                     score: 'score',
                     active: 'active',
                     category: 'catégorie',
+                    name: 'nom',
                 }
             },
             Budget:{
@@ -53,6 +54,19 @@ export const fr = {
                     name: 'Nom',
                     budget: 'Budget',
                     envelope: 'Enveloppe',
+                }
+            },
+            Movement:{
+                listing:{
+                    add: 'Ajouter catégorie',
+                    edit: 'Editer catégorie',
+                },
+                fields:{
+                    amount: 'Montant',
+                    comment: 'Commentaire',
+                    label: 'Libellé',
+                    category: 'Catégorie',
+                    detectionMask: 'Masque de détection',
                 }
             }
         }

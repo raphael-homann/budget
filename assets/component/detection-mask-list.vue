@@ -20,10 +20,12 @@ export default {
     }
   },
   data():{
-    detectionMaskModal: DetectionMask|null
+    detectionMaskModal: DetectionMask | null,
+    onlyUncategorized: boolean
   } {
     return {
-      detectionMaskModal:null
+      detectionMaskModal: null,
+      onlyUncategorized: true
     }
   },
   computed: {
@@ -35,8 +37,46 @@ export default {
   },
   methods: {
     newMask() {
-      console.log('newMask !!');
-      this.detectionMaskModal = new DetectionMask()
+      this.detectionMaskModal = new DetectionMask();
+      this.detectionMaskModal.score = 100;
+    },
+    executeAll() {
+      this.executeDetection()
+    },
+    executeDetection(detectionMask?: DetectionMask) {
+      let body:{
+        onlyUncategorized: boolean,
+        detectionMaskId?: number
+        budgetId?: number
+      }={
+        onlyUncategorized: this.onlyUncategorized
+      }
+      let endpoint = this.buildDetectionEndpoint(detectionMask);
+      // if(detectionMask) {
+      //   body.detectionMaskId = detectionMask.id
+      // } else {
+      //   body.budgetId = this.budget.id
+      // }
+
+
+      let fetchParams: { method: string, body: string | null } = {
+        method: 'POST',
+        body: JSON.stringify(body)
+      }
+
+        fetch(endpoint, fetchParams).then(response => {
+          console.log(response);
+        })
+
+      console.log('execute mask ',detectionMask?.mask);
+    },
+    buildDetectionEndpoint(detectionMask?: DetectionMask): string {
+      let endpoint = '/budget/'+this.budget.id+'/executeDetection';
+      if(detectionMask) {
+        endpoint += '/'+detectionMask.id;
+      }
+      return endpoint;
+
     }
   }
 
@@ -49,6 +89,8 @@ export default {
         :detection-mask="detectionMaskModal"
         :entity-manager="entityManager"
         @close="detectionMaskModal=null"
+        @save="detectionMaskModal=null"
+       @play="executeDetection(detectionMaskModal)"
     />
   </v-dialog>
 
@@ -59,12 +101,25 @@ export default {
       max-width="400"
       title="Detection Masks"
   >
-  <v-btn variant="flat" color="secondary" prepend-icon="mdi-plus" @click="newMask">Ajouter</v-btn>
+    <v-list-item>
+      <v-checkbox label="only unused" v-model="onlyUncategorized"></v-checkbox>
+      <v-btn variant="flat" color="warning" prepend-icon="mdi-play" text="Execute All" @click="executeAll()"></v-btn>
+    </v-list-item>
+    <v-divider/>
+
+
+    <!--    Add-->
+    <v-list-item>
+      <v-btn variant="flat" color="secondary" prepend-icon="mdi-plus" @click="newMask">Ajouter</v-btn>
+    </v-list-item>
+    <v-divider/>
+
+    <!--    Liste-->
     <v-list>
       <v-list-item v-for="category in categoriesWithDetectionMask" :title="category.name">
         <v-list density="compact" variant="tonal">
           <v-list-item v-for="detectionMask in category.detectionMasks">
-<!--            <v-text-field v-model="detectionMask.mask"></v-text-field>-->
+            <v-btn size=20 variant="plain" icon="mdi-play" @click="executeDetection(detectionMask)"></v-btn>
             <v-btn size=20 variant="plain" icon="mdi-pencil" @click="detectionMaskModal = detectionMask.clone()"></v-btn>
             {{detectionMask.mask}}
           </v-list-item>

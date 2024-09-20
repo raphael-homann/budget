@@ -12,14 +12,14 @@
     <v-card-text>
 
       <!--fileName-->
-      <v-text-field v-model.number="import.fileName"
+      <v-text-field  v-model="import.fileName"
                     :label="t('budget.entities.Import.fields.fileName')" required>
       </v-text-field>
 
       <!--clear-->
-      <v-text-field v-model.number="import.clear"
+      <v-checkbox v-model="import.clear"
                     :label="t('budget.entities.Import.fields.clear')" required>
-      </v-text-field>
+      </v-checkbox>
 
       <!-- budget -->
       <v-row justify="end" v-if="budgetRepository">

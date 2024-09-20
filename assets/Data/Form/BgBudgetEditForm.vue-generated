@@ -4,12 +4,12 @@
     <v-card-text>
 
       <!--name-->
-      <v-text-field v-model.number="budget.name"
+      <v-text-field  v-model="budget.name"
                     :label="t('budget.entities.Budget.fields.name')" required>
       </v-text-field>
 
       <!--description-->
-      <v-text-field v-model.number="budget.description"
+      <v-text-field  v-model="budget.description"
                     :label="t('budget.entities.Budget.fields.description')" required>
       </v-text-field>
     </v-card-text>

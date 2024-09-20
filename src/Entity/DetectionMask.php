@@ -15,7 +15,7 @@ class DetectionMask extends AbstractSynergyBudgetEntity
     use SynergyNumericIdEntityTrait;
 
     #[ORM\Column(length: 512)]
-    private ?string $mask = null;
+    private string $mask = '';
 
     #[ORM\ManyToOne(inversedBy: 'detectionMasks')]
     #[ORM\JoinColumn(nullable: false)]
@@ -27,12 +27,15 @@ class DetectionMask extends AbstractSynergyBudgetEntity
     #[ORM\Column()]
     private bool $active = true;
 
+    #[ORM\Column(length: 255)]
+    private string $name = '';
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMask(): ?string
+    public function getMask(): string
     {
         return $this->mask;
     }
@@ -78,5 +81,22 @@ class DetectionMask extends AbstractSynergyBudgetEntity
         $this->active = $active;
 
         return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getBudget():?Budget
+    {
+        return $this->category?->getBudget();
     }
 }

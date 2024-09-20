@@ -4,7 +4,7 @@
     <v-card-text>
 
       <!--email-->
-      <v-text-field v-model.number="user.email"
+      <v-text-field  v-model="user.email"
                     :label="t('budget.entities.User.fields.email')" required>
       </v-text-field>
     </v-card-text>

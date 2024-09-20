@@ -2,6 +2,7 @@ import Entity from "@efrogg/synergy/Data/Entity";
 import Category from "./Category";
 import Budget from "./Budget";
 import Import from "./Import";
+import DetectionMask from "./DetectionMask";
 // --imports--  ! keep this line
 
 export default class Movement extends Entity  {
@@ -16,6 +17,9 @@ export default class Movement extends Entity  {
     private _budgetId: string | null = null;
     private _importId: string | null = null;
     private _import: Import | null = null;
+    public label: string = '';
+    private _detectionMaskId: string | null = null;
+    private _detectionMask: DetectionMask | null = null;
     // ---properties---  ! keep this line
 
     public get category(): Category | null {
@@ -52,6 +56,16 @@ export default class Movement extends Entity  {
     }
     public get import(): Import | null {
         return this._import ??= this.getRelation(Import,this.importId);
+    }
+    public get detectionMaskId(): string | null {
+        return this._detectionMaskId;
+    }
+    public set detectionMaskId(value: string | null) {
+        this._detectionMaskId = value;
+        this._detectionMask = null;
+    }
+    public get detectionMask(): DetectionMask | null {
+        return this._detectionMask ??= this.getRelation(DetectionMask,this.detectionMaskId);
     }
     // ---methods--- ! keep this line
 }

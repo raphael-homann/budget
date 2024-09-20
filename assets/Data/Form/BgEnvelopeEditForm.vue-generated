@@ -4,7 +4,7 @@
     <v-card-text>
 
       <!--name-->
-      <v-text-field v-model.number="envelope.name"
+      <v-text-field  v-model="envelope.name"
                     :label="t('budget.entities.Envelope.fields.name')" required>
       </v-text-field>
     </v-card-text>

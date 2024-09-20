@@ -23,17 +23,30 @@
         @save="onImportSaved"
     />
   </v-dialog>
+  <v-dialog v-model="detectionMaskModal" width="auto" :close-on-back="false">
+    <bg-detection-mask-edit-form
+        :detection-mask="detectionMaskModal"
+        :entity-manager="props.entityManager"
+        @close="detectionMaskModal=null"
+        @save="onDetectionmaskSaved"
+    />
+  </v-dialog>
 
   <v-card v-if="movement" :title="modalTitle(movement)">
     <v-card-text>
 
       <!--amount-->
-      <v-text-field v-model.number="movement.amount"
+      <v-text-field  v-model="movement.amount"
                     :label="t('budget.entities.Movement.fields.amount')" required>
       </v-text-field>
 
+      <!--label-->
+      <v-text-field  v-model="movement.label"
+                    :label="t('budget.entities.Movement.fields.label')" required>
+      </v-text-field>
+
       <!--comment-->
-      <v-text-field v-model.number="movement.comment"
+      <v-text-field  v-model="movement.comment"
                     :label="t('budget.entities.Movement.fields.comment')" required>
       </v-text-field>
 
@@ -101,6 +114,26 @@
                  color="secondary" size="small"></v-btn>
         </v-col>
       </v-row>
+
+      <!-- detectionMask -->
+      <v-row justify="end" v-if="detectionMaskRepository">
+        <v-col cols="8">
+          <v-autocomplete
+              :items="detectionMaskRepository.getItems()"
+              item-title="name"
+              item-value="id"
+              v-model="movement.detectionMaskId"
+              :label="t('budget.entities.Movement.fields.detectionMask')"
+              required
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="4">
+          <v-btn icon='mdi-plus-thick' @click="detectionMaskModal=new DetectionMask()" variant="tonal" color="primary"
+                 size="small"></v-btn>
+          <v-btn v-if="movement.detectionMask" icon='mdi-pencil' @click="editDetectionmask" variant="tonal"
+                 color="secondary" size="small"></v-btn>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-card-actions>
@@ -131,6 +164,9 @@ import BgBudgetEditForm from "./BgBudgetEditForm.vue";
 // import imports
 import Import from "../Entity/Import";
 import BgImportEditForm from "./BgImportEditForm.vue";
+// detectionMask imports
+import DetectionMask from "../Entity/DetectionMask";
+import BgDetectionMaskEditForm from "./BgDetectionMaskEditForm.vue";
 
 const categoryModal: Ref<Category | null> = ref(null);
 let categoryRepository: Repository<Category> | null = null;
@@ -138,6 +174,8 @@ const budgetModal: Ref<Budget | null> = ref(null);
 let budgetRepository: Repository<Budget> | null = null;
 const importModal: Ref<Import | null> = ref(null);
 let importRepository: Repository<Import> | null = null;
+const detectionMaskModal: Ref<DetectionMask | null> = ref(null);
+let detectionMaskRepository: Repository<DetectionMask> | null = null;
 
 const props = defineProps({
   entityManager: {
@@ -160,6 +198,7 @@ onMounted(() => {
   categoryRepository = props.entityManager.getRepository(Category)
   budgetRepository = props.entityManager.getRepository(Budget)
   importRepository = props.entityManager.getRepository(Import)
+  detectionMaskRepository = props.entityManager.getRepository(DetectionMask)
 })
 
 function modalTitle(entity: Entity): string {
@@ -203,6 +242,14 @@ function editImport() {
 function onImportSaved(import: Import) {
   props.movement.importId = import.getId();
   importModal.value = null;
+}
+function editDetectionmask() {
+  detectionMaskModal.value = detectionMaskRepository?.get(props.movement.detectionMaskId)?.clone() ?? null
+}
+
+function onDetectionmaskSaved(detectionMask: DetectionMask) {
+  props.movement.detectionMaskId = detectionMask.getId();
+  detectionMaskModal.value = null;
 }
 
 </script>

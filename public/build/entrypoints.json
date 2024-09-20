@@ -3,11 +3,11 @@
     "app": {
       "js": [
         "https://budget.e-frogg.docker:9997/build/runtime.js",
-        "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-4e778b.js",
+        "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-c0dffb.js",
         "https://budget.e-frogg.docker:9997/build/app.js"
       ],
       "css": [
-        "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-4e778b.css",
+        "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-c0dffb.css",
         "https://budget.e-frogg.docker:9997/build/app.css"
       ]
     }
