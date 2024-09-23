@@ -1,58 +1,41 @@
 <?php
 
-namespace App\Service;
+declare(strict_types=1);
+
+namespace App\Importer;
 
 use App\Entity\Budget;
 use App\Entity\Import;
 use App\Entity\Movement;
-use App\Helper\DryRunTrait;
-use App\Importer\CreditAgricoleImporter;
-use App\Importer\FileReader\FileReaderFactory;
-use App\Importer\ImportStats;
+use App\Importer\Movement\CreditAgricoleMovementImporter;
+use App\Importer\Movement\FileReader\FileReaderFactory;
 use App\Repository\MovementRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
-class MovementImporter
+class MovementImporter extends AbstractImporter
 {
-    use DryRunTrait;
-
-    private bool $clear = false;
 
     public function __construct(
-        private readonly string $importBasePath,
         private LoggerInterface $logger,
-        private readonly CreditAgricoleImporter $creditAgricoleImporter,
+        private readonly CreditAgricoleMovementImporter $creditAgricoleImporter,
         private readonly FileReaderFactory $fileReaderFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly MovementRepository $movementRepository,
     ) {
     }
 
-    /**
-     * @return string
-     */
-    public function getImportBasePath(): string
+    #[Required]
+    public function configurePath(string $movementImportBasePath): void
     {
-        return $this->importBasePath;
-    }
-
-    /**
-     * @param bool $clear
-     */
-    public function setClear(bool $clear): void
-    {
-        $this->clear = $clear;
+        $this->setImportBasePath($movementImportBasePath);
     }
 
     public function import(string $file,Budget $budget): ImportStats
     {
         $stats = new ImportStats();
-        $path = $this->importBasePath . '/' . $file;
-        if (!file_exists($path)) {
-            throw new InvalidArgumentException(sprintf('File [%s] not found', $path));
-        }
+        $path = $this->findFile($file);
 
         if ($this->isDryRun()) {
             $this->logger->info('Dry-run: Importing file ' . $file);
@@ -64,19 +47,12 @@ class MovementImporter
         // guess the file reader based on the file extension
         $fileReader = $this->fileReaderFactory->create($path);
 
+        // prepare import entity
         $import = new Import();
         $import->setFileName($file);
         $import->setBudget($budget);
-        $import->setClear($this->clear);
+        $import->setClear($this->isClear());
         $this->entityManager->persist($import);
-        $this->entityManager->flush();
-
-        if ($this->clear) {
-            $this->logger->warning('Clearing all movements');
-            $movements = $this->movementRepository->findBy(['budget' => $budget]);
-            $this->logger->info('found ' . count($movements) . ' movements');
-            array_map(fn(Movement $movement) => $this->entityManager->remove($movement), $movements);
-        }
         $this->entityManager->flush();
 
         $this->logger->notice('importing movements');
@@ -107,5 +83,22 @@ class MovementImporter
             }
         }
         return false;
+    }
+
+    public function clear(Budget $budget): void
+    {
+        $this->logger->warning('Clearing all movements');
+        $movements = $this->movementRepository->findBy(['budget' => $budget]);
+        $this->logger->info('found ' . count($movements) . ' movements');
+
+        // dry run mode
+        if ($this->isDryRun()) {
+            $this->logger->info('Dry-run: would remove ' . count($movements) . ' movements');
+            return;
+        }
+
+        // real mode
+        array_map(fn(Movement $movement) => $this->entityManager->remove($movement), $movements);
+        $this->entityManager->flush();
     }
 }

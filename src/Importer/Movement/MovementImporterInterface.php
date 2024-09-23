@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Importer;
+namespace App\Importer\Movement;
 
 use App\Entity\Movement;
-use App\Importer\FileReader\FileReaderInterface;
+use App\Importer\Movement\FileReader\FileReaderInterface;
 use Generator;
 
-interface ImporterInterface
+interface MovementImporterInterface
 {
 
     /**

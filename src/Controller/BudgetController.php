@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\DetectionMask\DetectionExecutor;
+use App\Importer\MovementImporter;
 use App\Repository\BudgetRepository;
 use App\Repository\DetectionMaskRepository;
-use App\Service\MovementImporter;
 use Exception;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
