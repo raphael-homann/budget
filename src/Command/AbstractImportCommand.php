@@ -61,6 +61,7 @@ abstract class AbstractImportCommand extends Command
         } else {
             throw new \InvalidArgumentException('Budget not specified');
         }
+        $importer->reset();
 
         // clear before import
         if($input->getOption('clear')){
@@ -68,14 +69,18 @@ abstract class AbstractImportCommand extends Command
         }
 
         // import
-        $stats = $importer->import($input->getArgument('file'),$budget);
+        $importer->import($input->getArgument('file'),$budget);
 
-        $io->table([],[
-            ['Imported',$stats->getImported()],
-            ['Skipped',$stats->getSkipped()],
-        ]);
-        $io->success(sprintf('Imported %d',$stats->getImported()));
-        $io->info(sprintf('Skipped %d',$stats->getSkipped()));
+        foreach ($importer->getStats()->getSubStats(true) as $statName => $stat) {
+            $io->title($statName);
+            $io->table([],[
+                ['Imported',$stat->getImported()],
+                ['Skipped',$stat->getSkipped()],
+                ['Removed',$stat->getRemoved()]
+            ]);
+            $io->success(sprintf('Imported %d',$stat->getImported()));
+            $io->info(sprintf('Skipped %d',$stat->getSkipped()));
+        }
 
         return self::SUCCESS;
     }

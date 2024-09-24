@@ -32,9 +32,8 @@ class MovementImporter extends AbstractImporter
         $this->setImportBasePath($movementImportBasePath);
     }
 
-    public function import(string $file,Budget $budget): ImportStats
+    public function import(string $file,Budget $budget): void
     {
-        $stats = new ImportStats();
         $path = $this->findFile($file);
 
         if ($this->isDryRun()) {
@@ -61,17 +60,15 @@ class MovementImporter extends AbstractImporter
             $movement->setBudget($budget);
             $movement->setImport($import);
             if($this->alreadyExists($movement,$budget)) {
-                $stats->incrementSkipped();
+                $this->stats->incrementSkipped();
                 $this->logger->warning('Movement already exists, skipping');
                 continue;
             }
-            $stats->incrementImported();
+            $this->stats->incrementImported();
             $this->entityManager->persist($movement);
 //            dump($movement->getDate()->format('Y-m-d') . ' : ' . $movement->getAmount());
         }
         $this->entityManager->flush();
-
-        return $stats;
     }
 
     private function alreadyExists(Movement $newMovement, Budget $budget): bool

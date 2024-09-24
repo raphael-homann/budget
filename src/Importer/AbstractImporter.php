@@ -16,6 +16,8 @@ abstract class AbstractImporter
 
     private string $importBasePath;
 
+    protected ImportStats $stats;
+
     /**
      * @param string $file
      *
@@ -46,7 +48,19 @@ abstract class AbstractImporter
         $this->importBasePath = $importBasePath;
     }
 
-    abstract public function import(string $file, Budget $budget): ImportStats;
+    abstract public function import(string $file, Budget $budget): void;
     abstract public function clear(Budget $budget): void;
 
+    public function reset(): void
+    {
+        $this->stats = new ImportStats();
+    }
+
+    /**
+     * @return ImportStats
+     */
+    public function getStats(): ImportStats
+    {
+        return $this->stats;
+    }
 }

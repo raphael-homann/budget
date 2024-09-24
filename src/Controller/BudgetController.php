@@ -59,7 +59,7 @@ class BudgetController extends AbstractController
     public function import(Request $request, MovementImporter $importer, BudgetRepository $budgetRepository): JsonResponse
     {
         try {
-            /** @var ?UploadedFile $file */
+            /** @var UploadedFile $file */
             $file = $request->files->get('file') ?? throw new \InvalidArgumentException('file is not provided');
             $dryRun = $request->request->getBoolean('dry-run');
             $overwrite = $request->request->getBoolean('overwrite');
@@ -78,17 +78,14 @@ class BudgetController extends AbstractController
             $movedFile = $file->move(
                 $importer->getImportBasePath(),
                 $importName
-            );//        $targetFileName = $importer->getImportBasePath() . '/' . $importName;
-            //        $upload = move_uploaded_file($targetFileName, $file->getPathname());
-            //        if(!$upload) {
-            //            throw new \InvalidArgumentException('Error uploading file from '.$file->getPathname().' to '.$file->getPathname);
-            //        }
-            $stats = $importer->import($movedFile->getFilename(), $budget);
+            );
+
+            $importer->import($movedFile->getFilename(), $budget);
             return new JsonResponse([
                 'status'     => 'ok',
                 'fileName'   => $importName,
                 'dry-run'    => $dryRun,
-                'statistics' => $stats->toArray()
+                'statistics' => $importer->getStats()->toArray()
             ]);
         } catch (Exception $e) {
             return new JsonResponse([
