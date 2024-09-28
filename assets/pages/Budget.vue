@@ -8,9 +8,10 @@ import Repository from "@efrogg/synergy/Data/Repository";
 import ListChangedEvent from "@efrogg/synergy/Data/Event/ListChangedEvent";
 import routeMixin from "../mixin/routeParamsMixin";
 import BgCategoryEditForm from "../Data/Form/BgCategoryEditForm.vue";
+import BudgetPageHeader from "../component/budget-page-header.vue";
 
 const BudgetComponent = defineComponent({
-  components: {BgCategoryEditForm, BgEnvelopeEditForm, ImportModal},
+  components: {BudgetPageHeader, BgCategoryEditForm, BgEnvelopeEditForm, ImportModal},
   mixins: [
       routeMixin
   ],
@@ -18,13 +19,11 @@ const BudgetComponent = defineComponent({
     budgetRepository: Repository<Budget>
     budget: null | Budget
     budgetId: null | number,
-    showImportModal: boolean
   } {
     return {
       budgetRepository: store.entityManager.getRepository(Budget),
       budget: null,
       budgetId: null,
-      showImportModal: false
     }
   },
   methods: {
@@ -38,7 +37,6 @@ const BudgetComponent = defineComponent({
   mounted() {
     this.budgetRepository.addEventListener(ListChangedEvent.TYPE, this.initBudget);
     this.budgetId = this.getRouteParamInt(this.$route,'id');
-    console.log('budgetId', this.budgetId)
     this.initBudget();
   }
 });
@@ -46,22 +44,8 @@ const BudgetComponent = defineComponent({
 export default BudgetComponent;
 </script>
 
-<template>
-
-  <v-dialog v-model="showImportModal" max-width="500" @close="showImportModal=false">
-    <import-modal :budget-id="budgetId" @finished="showImportModal=false"></import-modal>
-  </v-dialog>
-
-
-
-  <v-container fluid v-if="budget">
-    <h1>Budget : {{ budget.name }}</h1>
-    <v-btn :to="{name:'budget-envelopes',params:{budgetId:budget.id}}">Envelopes</v-btn>
-    <v-btn :to="{name:'budget-categories',params:{budgetId:budget.id}}">Catégories</v-btn>
-    <v-btn :to="{name:'budget-movements',params:{budgetId:budget.id}}">Mouvements</v-btn>
-    <v-btn :to="{name:'budget-movements-v2',params:{budgetId:budget.id}}">Mouvements V2</v-btn>
-    <v-btn @click="showImportModal=true">Importer</v-btn>
-  </v-container>
+<template >
+  <budget-page-header :budget="budget"></budget-page-header>
 </template>
 
 <style scoped>

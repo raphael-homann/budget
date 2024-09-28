@@ -11,6 +11,8 @@
                             :entity-manager="entityManager"></bg-detection-mask-list>
   </v-navigation-drawer>
 
+  <budget-page-header v-if="budget" :budget="budget"></budget-page-header>
+
   <h1>edit movements (budget : {{ budget?.name }} {{ budget?.id }})</h1>
 
   <v-container>
@@ -76,10 +78,7 @@
         {{ formatDate(value) }}
       </template>
       <template v-slot:item.category.envelope.name="{ item, value }">
-        {{item.category?.envelope?.color}} =>
-        {{colorMapping[item.category?.envelope?.color]}}
-        <v-chip :color="colorMapping[item.category?.envelope?.color]??null">{{ value }}</v-chip>
-       -- {{value}}
+        <v-chip v-if="item.category?.envelope" :color="item.category.envelope.finalColor">{{ value }}</v-chip>
       </template>
       <template v-slot:item.amount="{ item }">
         <v-icon v-if="item.amount>0" color="green">mdi-plus</v-icon>
@@ -89,6 +88,7 @@
 
       <template v-slot:item.category="{ item }">
         <v-autocomplete
+            :bg-color="item.categoryId?'':'red-lighten-4'"
             density="compact"
             :items="categories"
             item-title="name"
@@ -134,6 +134,7 @@ import BgDetectionMaskEditForm from "../../Data/Form/BgDetectionMaskEditForm.vue
 import BgMovementFilters, {ListFilters} from "./component/MovementFilters.vue";
 import EqualsAnyFilter from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Filter/EqualsAnyFilter";
 import ContainsFilter from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Filter/ContainsFilter";
+import BudgetPageHeader from "../../component/budget-page-header.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const movementRepository = entityManager.getRepository(Movement);
@@ -142,6 +143,7 @@ const budgetRepository = entityManager.getRepository(Budget);
 type DataTableHeader = { title: string, value: string, sortable?: boolean, width?: string | number };
 const MovementList = defineComponent({
   components: {
+    BudgetPageHeader,
     BgMovementFilters,
     BgDetectionMaskEditForm, BgDetectionMaskList, ImportModal, BgCategoryEditForm, BgMovementEditForm
   },
@@ -161,7 +163,6 @@ const MovementList = defineComponent({
     showImportModal: boolean,
     listFilters: ListFilters
     updateTimeout?:number,
-    colorMapping: Record<string, string>
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
@@ -175,15 +176,11 @@ const MovementList = defineComponent({
       entityManager: entityManager,
       budgetId: null,
       budget: null,
-      colorMapping : {
-        'success': 'green-darken-2',
-        'warning': 'orange-darken-2',
-        'danger': 'deep-orange-darken-2'
-      },
       headers: [
         {title: 'Amount', value: 'amount', width: "1"},
         {title: 'Date', value: 'date', width: "1"},
-        {title: 'Libellé', value: 'label', width: "3"},
+        {title: 'Libellé', value: 'label', width: "2"},
+        {title: 'Commentaire', value: 'comment', width: "2"},
         {title: 'Catégorie', value: 'category', sortable: false, width: "1"},
         {title: 'Enveloppe', value: 'category.envelope.name', sortable: false, width: "1"},
         {title: 'Actions', value: 'actions', sortable: false, width: "1"},
@@ -241,7 +238,7 @@ const MovementList = defineComponent({
         let criteria = new Criteria();
         criteria
             .addFilter(new EqualsFilter('budget.id', this.budgetId))
-            .addSort(new FieldSort('name', 'asc'))
+            .addSort(new FieldSort('date', 'desc'))
         // .addSort(new CustomSort((a: Movement, b:Movement) => {
         //   return a.name.localeCompare(b.name)
         // }))

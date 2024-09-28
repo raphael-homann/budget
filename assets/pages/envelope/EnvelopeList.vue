@@ -1,4 +1,5 @@
-<template>
+<template v-if="budget">
+  <budget-page-header :budget="budget"></budget-page-header>
   <h1>edit envelopes (budget : {{ budget?.name }})</h1>
   <v-container>
 
@@ -40,13 +41,14 @@ import EqualsFilter from "@efrogg/synergy/Data/Criteria/Filter/EqualsFilter";
 import FieldSort from "@efrogg/synergy/Data/Criteria/Sort/FieldSort";
 import EntityChangedEvent from "@efrogg/synergy/Data/Event/EntityChangedEvent";
 import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEvent";
+import BudgetPageHeader from "../../component/budget-page-header.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const envelopeRepository = entityManager.getRepository(Envelope);
 const budgetRepository = entityManager.getRepository(Budget);
 
 const EnvelopeList = defineComponent({
-  components: {BgEnvelopeEditForm},
+  components: {BudgetPageHeader, BgEnvelopeEditForm},
   data(): {
     envelopes: Envelope[],
     envelopeModal: null | Envelope,

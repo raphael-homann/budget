@@ -1,4 +1,5 @@
 <template>
+  <budget-page-header :budget="budget"></budget-page-header>
   <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
   <h1>edit categories (budget : {{ budget?.name }} {{ budget?.id }}</h1>
   <v-container>
@@ -37,13 +38,14 @@ import Criteria from "@efrogg/synergy/Data/Criteria/Criteria";
 import EqualsFilter from "@efrogg/synergy/Data/Criteria/Filter/EqualsFilter";
 import FieldSort from "@efrogg/synergy/Data/Criteria/Sort/FieldSort";
 import ListItemChangedEvent from "@efrogg/synergy/Data/Event/ItemListChangedEvent";
+import BudgetPageHeader from "../../component/budget-page-header.vue";
 
 const entityManager: EntityManager = store.entityManager;
 const categoryRepository = entityManager.getRepository(Category);
 const budgetRepository = entityManager.getRepository(Budget);
 
 const CategoryList = defineComponent({
-  components: {BgCategoryEditForm},
+  components: {BudgetPageHeader, BgCategoryEditForm},
   data(): {
     categories: Category[],
     breadcrumbs: [],

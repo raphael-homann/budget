@@ -38,8 +38,8 @@ export default {
       let formData = new FormData();
       formData.append('budget-id', this.budgetId?.toString());
       formData.append('file', this.file)
-      formData.append('dry-run', this.dryRun ? 'true' : 'false');
-      formData.append('overwrite', this.overwrite ? 'true' : 'false');
+      formData.append('dry-run', this.dryRun ? '1' : '0');
+      formData.append('overwrite', this.overwrite ? '1' : '0');
 
 
       fetch('/budget/import', {

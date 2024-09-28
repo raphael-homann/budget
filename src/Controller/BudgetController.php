@@ -80,6 +80,7 @@ class BudgetController extends AbstractController
                 $importName
             );
 
+            $importer->reset();
             $importer->import($movedFile->getFilename(), $budget);
             return new JsonResponse([
                 'status'     => 'ok',
