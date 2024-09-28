@@ -5,22 +5,25 @@
       permanent
       expand-on-hover
       color="primary"
+      width="350"
   >
-    <bg-detection-mask-list v-if=budget :budget="budget" :entity-manager="entityManager"></bg-detection-mask-list>
+    <bg-detection-mask-list v-if=budget :budget="budget" :detection-mask-input="detectionMaskModal"
+                            :entity-manager="entityManager"></bg-detection-mask-list>
   </v-navigation-drawer>
 
   <h1>edit movements (budget : {{ budget?.name }} {{ budget?.id }})</h1>
 
   <v-container>
 
-    <v-dialog v-model="detectionMaskModal" width="auto" :close-on-back="false">
-      <bg-detection-mask-edit-form v-if="detectionMaskModal"
-                                   :detection-mask="detectionMaskModal"
-                                   :entity-manager="entityManager"
-                                   @close="detectionMaskModal=null"
-      />
+    <!--    <v-dialog v-model="detectionMaskModal" width="auto" :close-on-back="false">-->
+    <!--      <bg-detection-mask-edit-form v-if="detectionMaskModal"-->
+    <!--                                   :detection-mask="detectionMaskModal"-->
+    <!--                                   :entity-manager="entityManager"-->
+    <!--                                   @close="detectionMaskModal=null"-->
+    <!--                                   @play="playDetection(detectionMaskModal)"-->
+    <!--      />-->
 
-    </v-dialog>
+    <!--    </v-dialog>-->
 
     <!--    <v-dialog v-model="detectionMaskMovement" width="auto" :close-on-back="false">-->
     <!--      {{detectionMaskMovement?.label}}-->
@@ -53,6 +56,8 @@
     <v-btn @click="create" color="primary">Ajouter</v-btn>
     <v-btn @click="showImportModal=true">Importer</v-btn>
 
+    <bg-movement-filters :entity-manager="entityManager" :filters="listFilters"
+                         @update:filters="updateMovements"></bg-movement-filters>
     <v-data-table
         density="compact"
         :headers="headers"
@@ -61,13 +66,20 @@
         class="elevation-1"
     >
       <template v-slot:item.actions="{ item }">
-        <v-icon @click="openDetectionMask(item)" :icon="item.detectionMask?'mdi-star':'mdi-star-outline'"/>
+        <v-icon @click="openDetectionMask(item)" :icon="item.detectionMask?'mdi-star':'mdi-star-outline'"
+                :color="getProgressColor(item.detectionMask?.score??-1)"/>
         <v-icon @click="console.log(item);movementModal=item.clone()">mdi-pencil</v-icon>
         <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>
       </template>
 
       <template v-slot:item.date="{ item, value }">
         {{ formatDate(value) }}
+      </template>
+      <template v-slot:item.category.envelope.name="{ item, value }">
+        {{item.category?.envelope?.color}} =>
+        {{colorMapping[item.category?.envelope?.color]}}
+        <v-chip :color="colorMapping[item.category?.envelope?.color]??null">{{ value }}</v-chip>
+       -- {{value}}
       </template>
       <template v-slot:item.amount="{ item }">
         <v-icon v-if="item.amount>0" color="green">mdi-plus</v-icon>
@@ -84,6 +96,7 @@
             v-model="item.categoryId"
             label="Catégorie"
             required
+            hide-details
             @update:modelValue="entityManager.save(item)"
             @update:search="categorySearchUpdated"
         >
@@ -91,6 +104,7 @@
             <v-btn @click="newCategory(item)">create !</v-btn>
           </template>
         </v-autocomplete>
+
 <!--        <v-icon @click="movementModal=item.clone()">mdi-pencil</v-icon>-->
 <!--        <v-icon @click="deleteMovement(item)">mdi-delete</v-icon>-->
       </template>
@@ -117,6 +131,9 @@ import ImportModal from "../../component/import-modal.vue";
 import BgDetectionMaskList from "../../component/detection-mask-list.vue";
 import DetectionMask from "../../Data/Entity/DetectionMask";
 import BgDetectionMaskEditForm from "../../Data/Form/BgDetectionMaskEditForm.vue";
+import BgMovementFilters, {ListFilters} from "./component/MovementFilters.vue";
+import EqualsAnyFilter from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Filter/EqualsAnyFilter";
+import ContainsFilter from "../../../custom/npm-src/SynergyTS-npm/Data/Criteria/Filter/ContainsFilter";
 
 const entityManager: EntityManager = store.entityManager;
 const movementRepository = entityManager.getRepository(Movement);
@@ -124,7 +141,10 @@ const budgetRepository = entityManager.getRepository(Budget);
 
 type DataTableHeader = { title: string, value: string, sortable?: boolean, width?: string | number };
 const MovementList = defineComponent({
-  components: {BgDetectionMaskEditForm, BgDetectionMaskList, ImportModal, BgCategoryEditForm, BgMovementEditForm},
+  components: {
+    BgMovementFilters,
+    BgDetectionMaskEditForm, BgDetectionMaskList, ImportModal, BgCategoryEditForm, BgMovementEditForm
+  },
   data(): {
     currentCategorySearch: string,
     currentMovement: Movement|null,
@@ -138,7 +158,10 @@ const MovementList = defineComponent({
     budgetId: null | number,
     budget: null | Budget,
     headers: DataTableHeader[],
-    showImportModal: boolean
+    showImportModal: boolean,
+    listFilters: ListFilters
+    updateTimeout?:number,
+    colorMapping: Record<string, string>
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
@@ -152,6 +175,11 @@ const MovementList = defineComponent({
       entityManager: entityManager,
       budgetId: null,
       budget: null,
+      colorMapping : {
+        'success': 'green-darken-2',
+        'warning': 'orange-darken-2',
+        'danger': 'deep-orange-darken-2'
+      },
       headers: [
         {title: 'Amount', value: 'amount', width: "1"},
         {title: 'Date', value: 'date', width: "1"},
@@ -160,20 +188,46 @@ const MovementList = defineComponent({
         {title: 'Enveloppe', value: 'category.envelope.name', sortable: false, width: "1"},
         {title: 'Actions', value: 'actions', sortable: false, width: "1"},
       ],
-      showImportModal: false
+      showImportModal: false,
+      listFilters: {
+        categoryId: [],
+        envelopeId: [],
+        label: ''
+      }
     }
   }, computed: {
     categories() {
       return store.entityManager.getRepository(Category).getItems();
     }
   },
+  watch: {},
   methods: {
+    getProgressColor(score: number) {
+      if (score > 80) {
+        return 'success';
+      } else if (score > 50) {
+        return 'warning';
+      } else if (score > 0) {
+        return 'error';
+      } else {
+        return '';
+      }
+    },
+    updateMovements() {
+      clearTimeout(this.updateTimeout);
+      this.updateTimeout = setTimeout(() => {
+        this.initMovements();
+      }, 300);
+    },
     formatDate(date: string) {
       return new Date(date).toLocaleDateString();
     },
+    playDetection(detectionMask: DetectionMask) {
+      console.log('play detection', detectionMask);
+    },
     openDetectionMask(movement: Movement) {
       if (movement.detectionMask) {
-        this.detectionMaskModal = movement.detectionMask;
+        this.detectionMaskModal = movement.detectionMask.clone();
       } else {
         let detectionMask = new DetectionMask();
         detectionMask.score = 100;
@@ -192,6 +246,18 @@ const MovementList = defineComponent({
         //   return a.name.localeCompare(b.name)
         // }))
         ;
+        let categoryIds = this.listFilters.categoryId;
+        if (categoryIds && categoryIds.length > 0) {
+          criteria.addFilter(new EqualsAnyFilter('categoryId', categoryIds));
+        }
+        let envelopeIds = this.listFilters.envelopeId;
+        if (envelopeIds && envelopeIds.length > 0) {
+          criteria.addFilter(new EqualsAnyFilter('category.envelopeId', envelopeIds));
+        }
+        if (this.listFilters.label) {
+          criteria.addFilter(new ContainsFilter('label', this.listFilters.label));
+        }
+
         // criteria.addFilter(new CustomFilter('budget.id', (id: any) => id === this.budgetId));                          // works
         this.movements = movementRepository.search(criteria).getItems();                // works too
         // this.movements = movementRepository.findItemsBy({'budget.id': new EqualsFilter('budget.id',this.budgetId)}).getItems(); // works

@@ -6,6 +6,7 @@ export default class Budget extends Entity  {
 
     public name: string = '';
     public description: string = '';
+    public color: string = '';
     // ---properties---  ! keep this line
 
     // ---methods--- ! keep this line

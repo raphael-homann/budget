@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Importer\Movement;
+namespace App\Sync\Importer\Movement;
 
 use App\Entity\Movement;
-use App\Importer\Movement\FileReader\FileReaderInterface;
+use App\Sync\Importer\Movement\FileReader\FileReaderInterface;
 use Generator;
 
 interface MovementImporterInterface

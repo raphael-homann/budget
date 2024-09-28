@@ -2,84 +2,42 @@
 
 namespace App\Command;
 
-use App\Importer\AbstractImporter;
-use App\Repository\BudgetRepository;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
+use App\Sync\Importer\AbstractImporter;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-abstract class AbstractImportCommand extends Command
+abstract class AbstractImportCommand extends AbstractSyncCommand
 {
 
-    protected InputInterface $input;
-    protected SymfonyStyle $io;
 
-    public function __construct(
-        protected readonly BudgetRepository $budgetRepository
-    )
-    {
-        parent::__construct();
-    }
 
     protected function configure(): void
     {
-        // add file argument
-        $this->addArgument('file', InputArgument::REQUIRED, 'The file to import');
-        // dry-run option
-        $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Perform a dry-run');
-        // budget option
-        $this->addOption('budget-id', null, InputOption::VALUE_REQUIRED, 'The budget to import the movements to');
-        $this->addOption('budget-name', null, InputOption::VALUE_REQUIRED, 'The budget name to import the movements to');
+        parent::configure();
         $this->addOption('clear', null, InputOption::VALUE_NONE, 'Clear all movements before importing');
     }
 
-    protected function configureIo(InputInterface $input, OutputInterface $output): void
-    {
-        $this->input = $input;
-        $this->io = new SymfonyStyle($input, $output);
 
-    }
     protected function executeImport(AbstractImporter $importer): int
     {
-        $this->io?? throw new \LogicException('IO not configured. please call configureIo before executeImport');
-
-        $input = $this->input;
-        $io = $this->io;
-        $importer->setDryRun($input->getOption('dry-run'));
-
-        // find budget
-        if($input->getOption('budget-name')){
-            $budget = $this->budgetRepository->findOneBy(['name'=>$input->getOption('budget-name')])
-                ?? throw new \InvalidArgumentException('Budget not found');
-        }
-        else if($input->getOption('budget-id')) {
-            $budget = $this->budgetRepository->find($input->getOption('budget-id'))
-                ?? throw new \InvalidArgumentException('Budget not found');
-        } else {
-            throw new \InvalidArgumentException('Budget not specified');
-        }
-        $importer->reset();
+        $this->prepareSync($importer);
 
         // clear before import
-        if($input->getOption('clear')){
-            $importer->clear($budget);
+        if ($this->input->getOption('clear')) {
+            $importer->clear($this->budget);
         }
 
         // import
-        $importer->import($input->getArgument('file'),$budget);
+        $importer->import($this->getFile(), $this->budget);
 
         foreach ($importer->getStats()->getSubStats(true) as $statName => $stat) {
-            $io->title($statName);
-            $io->table([],[
+            $this->io->title($statName);
+            $this->io->table([], [
                 ['Imported',$stat->getImported()],
                 ['Skipped',$stat->getSkipped()],
                 ['Removed',$stat->getRemoved()]
             ]);
-            $io->success(sprintf('Imported %d',$stat->getImported()));
-            $io->info(sprintf('Skipped %d',$stat->getSkipped()));
+            $this->io->success(sprintf('Imported %d', $stat->getImported()));
+            $this->io->info(sprintf('Skipped %d', $stat->getSkipped()));
         }
 
         return self::SUCCESS;

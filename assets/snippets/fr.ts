@@ -23,6 +23,7 @@ export const fr = {
                     active: 'active',
                     category: 'catégorie',
                     name: 'nom',
+                    detectionType: 'type de détection',
                 }
             },
             Budget:{
@@ -43,6 +44,7 @@ export const fr = {
                 fields:{
                     name: 'Nom',
                     description: 'Description',
+                    color: 'Couleur'
                 }
             },
             Category:{
@@ -58,8 +60,8 @@ export const fr = {
             },
             Movement:{
                 listing:{
-                    add: 'Ajouter catégorie',
-                    edit: 'Editer catégorie',
+                    add: 'Ajouter Mouvement',
+                    edit: 'Editer Mouvement',
                 },
                 fields:{
                     amount: 'Montant',

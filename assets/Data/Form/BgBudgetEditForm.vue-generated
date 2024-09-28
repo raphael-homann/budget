@@ -12,6 +12,11 @@
       <v-text-field  v-model="budget.description"
                     :label="t('budget.entities.Budget.fields.description')" required>
       </v-text-field>
+
+      <!--color-->
+      <v-text-field  v-model="budget.color"
+                    :label="t('budget.entities.Budget.fields.color')" required>
+      </v-text-field>
     </v-card-text>
 
     <v-card-actions>

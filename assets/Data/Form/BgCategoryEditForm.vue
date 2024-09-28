@@ -26,7 +26,7 @@
 
       <!-- budget -->
       <v-row justify="end" v-if="budgetRepository">
-        <v-col cols="8">
+        <v-col cols="11">
           <v-autocomplete
               :items="budgetRepository.getItems()"
               item-title="name"
@@ -36,7 +36,8 @@
               required
           ></v-autocomplete>
         </v-col>
-        <v-col cols="4">
+        <v-spacer></v-spacer>
+        <v-col cols="1">
           <v-btn icon='mdi-plus-thick' @click="budgetModal=new Budget()" variant="tonal" color="primary"
                  size="small"></v-btn>
           <v-btn v-if="category.budget" icon='mdi-pencil' @click="editBudget" variant="tonal"

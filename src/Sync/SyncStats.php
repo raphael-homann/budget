@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Importer;
+namespace App\Sync;
 
-class ImportStats
+class SyncStats
 {
 
     /**
-     * @var array<string, ImportStats>
+     * @var array<string, SyncStats>
      */
     public array $subStats = [];
     public const string SKIPPED = 'skipped';
@@ -39,22 +39,22 @@ class ImportStats
         return $this->count[$key] ?? 0;
     }
 
-    public function incrementSkipped(?string $index = null): void
+    public function incrementSkipped(?string $index = null, int $increment = 1): void
     {
-        $this->increment(self::SKIPPED, 1, $index);
+        $this->increment(self::SKIPPED, $index, $increment);
     }
 
-    public function incrementImported(?string $index = null): void
+    public function incrementImported(?string $index = null, int $increment = 1): void
     {
-        $this->increment(self::IMPORTED, 1, $index);
+        $this->increment(self::IMPORTED, $index, $increment);
     }
 
-    public function incrementRemoved(?string $index = null): void
+    public function incrementRemoved(?string $index = null, int $increment = 1): void
     {
-        $this->increment(self::REMOVED, 1, $index);
+        $this->increment(self::REMOVED, $index, $increment);
     }
 
-    public function increment(string $key, int $increment = 1, ?string $index = null): void
+    public function increment(string $key, ?string $index = null, int $increment = 1): void
     {
         $stat = $this->findStat($index);
         $stat->count[$key] = $stat->get($key) + $increment;
@@ -80,7 +80,7 @@ class ImportStats
     }
 
     /**
-     * @return array<ImportStats>
+     * @return array<SyncStats>
      */
     public function getSubStats(bool $includingMain = false): array
     {

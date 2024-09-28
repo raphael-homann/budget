@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\DetectionMaskRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Efrogg\Synergy\Entity\SynergyEntityInterface;
 use Efrogg\Synergy\Entity\SynergyNumericIdEntityTrait;
 use Efrogg\Synergy\Mapping\SynergyEntity;
 
@@ -13,6 +12,10 @@ use Efrogg\Synergy\Mapping\SynergyEntity;
 class DetectionMask extends AbstractSynergyBudgetEntity
 {
     use SynergyNumericIdEntityTrait;
+
+    public const string DETECTION_TYPE_CONTAINS = 'contains';
+    public const string DETECTION_TYPE_REGEX = 'regex';
+    public const string DETECTION_TYPE_WILDCARD = 'wildcard';
 
     #[ORM\Column(length: 512)]
     private string $mask = '';
@@ -29,6 +32,9 @@ class DetectionMask extends AbstractSynergyBudgetEntity
 
     #[ORM\Column(length: 255)]
     private string $name = '';
+
+    #[ORM\Column(nullable: true)]
+    private ?string $detectionType = null;
 
     public function getId(): ?int
     {
@@ -98,5 +104,17 @@ class DetectionMask extends AbstractSynergyBudgetEntity
     public function getBudget():?Budget
     {
         return $this->category?->getBudget();
+    }
+
+    public function getDetectionType(): ?string
+    {
+        return $this->detectionType;
+    }
+
+    public function setDetectionType(?string $detectionType): static
+    {
+        $this->detectionType = $detectionType;
+
+        return $this;
     }
 }

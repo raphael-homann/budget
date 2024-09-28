@@ -1,12 +1,19 @@
 <template>
 
-  <v-card v-if="envelope" :title="modalTitle(envelope)">
+  <v-card v-if="envelope" :title="modalTitle(envelope)" :color="envelope.finalColor">
     <v-card-text>
 
       <!--name-->
-      <v-text-field v-model.number="envelope.name"
+      <v-text-field :color="envelope.finalColor" v-model.number="envelope.name"
                     :label="t('budget.entities.Envelope.fields.name')" required>
       </v-text-field>
+
+
+      <!--color-->
+      <v-select :color="envelope.finalColor" v-model="envelope.color" :items="Envelope.colorMapping" item-title="title" item-value="id"
+                 :label="t('budget.entities.Envelope.fields.color')" required>
+      </v-select>
+
     </v-card-text>
 
     <v-card-actions>
@@ -26,8 +33,6 @@ import Entity from "@efrogg/synergy/Data/Entity";
 // import SpDateField from "../Form/SpDateField.vue";
 import {onMounted, ref, Ref} from "vue";
 import EntityManager from "@efrogg/synergy/Data/EntityManager";
-
-
 
 const props = defineProps({
   entityManager: {

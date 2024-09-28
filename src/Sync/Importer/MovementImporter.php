@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Importer;
+namespace App\Sync\Importer;
 
 use App\Entity\Budget;
 use App\Entity\Import;
 use App\Entity\Movement;
-use App\Importer\Movement\CreditAgricoleMovementImporter;
-use App\Importer\Movement\FileReader\FileReaderFactory;
 use App\Repository\MovementRepository;
+use App\Sync\Importer\Movement\CreditAgricoleMovementImporter;
+use App\Sync\Importer\Movement\FileReader\FileReaderFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Service\Attribute\Required;
@@ -29,7 +29,7 @@ class MovementImporter extends AbstractImporter
     #[Required]
     public function configurePath(string $movementImportBasePath): void
     {
-        $this->setImportBasePath($movementImportBasePath);
+        $this->setBasePath($movementImportBasePath);
     }
 
     public function import(string $file,Budget $budget): void

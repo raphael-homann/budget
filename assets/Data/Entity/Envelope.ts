@@ -4,9 +4,16 @@ import Budget from "./Budget";
 
 export default class Envelope extends Entity  {
 
+    public static colorMapping = [
+        {id: 'danger', title: 'Danger', color: 'deep-orange-darken-2'},
+        {id: 'warning', title: 'Attention', color: 'orange-darken-2'},
+        {id: 'success', title: 'Succès', color: 'green-darken-2'},
+    ];
+
     public name: string = '';
     private _budget: Budget | null = null;
     private _budgetId: number | null = null;
+    public color: string = '';
     // ---properties---  ! keep this line
 
     public get budget(): Budget | null {
@@ -22,5 +29,12 @@ export default class Envelope extends Entity  {
         this._budgetId = value;
         this._budget = null;
     }
+
     // ---methods--- ! keep this line
+
+    // custom methods
+    public get finalColor(): string {
+        const mapping = Envelope.colorMapping.find((item) => item.id === this.color);
+        return mapping ? mapping.color : '';
+    }
 }

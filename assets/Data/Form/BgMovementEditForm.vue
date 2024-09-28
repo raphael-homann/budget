@@ -17,14 +17,14 @@
       </v-text-field>
 
       <!--label-->
-      <v-text-field  v-model="movement.label"
+      <v-textarea  v-model="movement.label"
                     :label="t('budget.entities.Movement.fields.label')" required>
-      </v-text-field>
+      </v-textarea>
 
       <!--comment-->
-      <v-text-field  v-model="movement.comment"
+      <v-textarea  v-model="movement.comment"
                     :label="t('budget.entities.Movement.fields.comment')" required>
-      </v-text-field>
+      </v-textarea>
 
       <!--date-->
       <bg-date-field :date="movement.date"

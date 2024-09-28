@@ -140,21 +140,16 @@ class DetectionExecutor
 
     private function matches(Movement $movement, DetectionMask $detectionMask): bool
     {
-        $mask = $detectionMask->getMask();
-        $label = $movement->getLabel();
-        if (null === $mask || null === $label) {
+        $mask = strtolower($detectionMask->getMask());
+        $label = strtolower($movement->getLabel() ?? '');
+        if ('' === $mask || '' === $label) {
             return false;
         }
 
-        //TODO : gérer regex etc... au niveau de la detection mask
-        if (str_starts_with($mask, '/')) {
-            return (bool)preg_match($mask, $label);
-        }
-
-        if (str_contains($mask, '*')) {
-            return fnmatch($mask, $label);
-        }
-
-        return str_contains($label, $mask);
+        return match ($detectionMask->getDetectionType()) {
+            DetectionMask::DETECTION_TYPE_REGEX => (bool)preg_match($mask, $label),
+            DetectionMask::DETECTION_TYPE_WILDCARD => fnmatch("*$mask*", $label),
+            default => str_contains($label, $mask),
+        };
     }
 }

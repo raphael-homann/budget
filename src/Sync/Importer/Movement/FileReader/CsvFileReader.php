@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Importer\Movement\FileReader;
+namespace App\Sync\Importer\Movement\FileReader;
 
 use Generator;
 

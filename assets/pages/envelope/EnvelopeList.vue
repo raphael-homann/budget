@@ -15,6 +15,9 @@
         :items-per-page="25"
         class="elevation-1"
     >
+      <template v-slot:item.name="{ item }">
+        <v-chip :color="item.finalColor">{{ item.name }}</v-chip>
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-icon @click="envelopeModal=item.clone()">mdi-pencil</v-icon>
         <v-icon @click="deleteEnvelope(item)">mdi-delete</v-icon>
@@ -50,7 +53,8 @@ const EnvelopeList = defineComponent({
     entityManager: EntityManager,
     budgetId: null | number,
     budget: null | Budget,
-    headers: { title: string, value: string, sortable?: boolean }[]
+    headers: { title: string, value: string, sortable?: boolean }[],
+    colorMapping: { [key: string]: string }
   } {
     let entityManager: EntityManager = store.entityManager;
     return {
@@ -62,7 +66,7 @@ const EnvelopeList = defineComponent({
       headers: [
         {title: 'Name', value: 'name'},
         {title: 'Actions', value: 'actions', sortable: false}
-      ]
+      ],
     }
   }, computed: {},
   methods: {

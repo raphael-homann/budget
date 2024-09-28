@@ -52,7 +52,7 @@ const MovementListV2 = defineComponent({
           .addAssociation('budget')
           .addAssociation('category.envelope')
           .setLimit(10)
-          .setAutoSync(true)
+          // .setAutoSync(true)
           // .setOffset(2)
           // .addSort(new FieldSort('date', 'desc'))
       ;

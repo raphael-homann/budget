@@ -4,8 +4,10 @@
   "build/runtime.js": "https://budget.e-frogg.docker:9997/build/runtime.js",
   "build/assets_pages_Home_vue.js": "https://budget.e-frogg.docker:9997/build/assets_pages_Home_vue.js",
   "build/assets_pages_Budget_vue.js": "https://budget.e-frogg.docker:9997/build/assets_pages_Budget_vue.js",
+  "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-fe2d5b.css": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-fe2d5b.css",
+  "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-fe2d5b.js": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-fe2d5b.js",
   "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-c0dffb.css": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-c0dffb.css",
   "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-c0dffb.js": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-c0dffb.js",
-  "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-d6823a.css": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-d6823a.css",
-  "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-d6823a.js": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-d6823a.js"
+  "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-b0f492.css": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-b0f492.css",
+  "build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-b0f492.js": "https://budget.e-frogg.docker:9997/build/vendors-node_modules_hotwired_stimulus_dist_stimulus_js-node_modules_vuetify_lib_styles_main_-b0f492.js"
 }

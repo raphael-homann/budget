@@ -2,8 +2,8 @@
 
 namespace App\Command;
 
-use App\Importer\MovementImporter;
 use App\Repository\BudgetRepository;
+use App\Sync\Importer\MovementImporter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,7 +25,7 @@ class ImportMovementsCommand extends AbstractImportCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->configureIo($input, $output);
-        $this->movementImporter->setImportBasePath($this->movementImportBasePath);
+        $this->movementImporter->setBasePath($this->movementImportBasePath);
         return $this->executeImport($this->movementImporter);
     }
 

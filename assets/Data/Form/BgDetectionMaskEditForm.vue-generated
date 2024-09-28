@@ -39,6 +39,11 @@
                     :label="t('budget.entities.DetectionMask.fields.name')" required>
       </v-text-field>
 
+      <!--detectionType-->
+      <v-text-field  v-model="detectionMask.detectionType"
+                    :label="t('budget.entities.DetectionMask.fields.detectionType')" required>
+      </v-text-field>
+
       <!-- category -->
       <v-row justify="end" v-if="categoryRepository">
         <v-col cols="8">

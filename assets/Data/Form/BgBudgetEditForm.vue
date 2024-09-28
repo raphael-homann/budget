@@ -32,7 +32,6 @@ import Entity from "@efrogg/synergy/Data/Entity";
 import {onMounted} from "vue";
 import EntityManager from "@efrogg/synergy/Data/EntityManager";
 
-
 const props = defineProps({
   entityManager: {
     type: EntityManager,

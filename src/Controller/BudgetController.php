@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\DetectionMask\DetectionExecutor;
-use App\Importer\MovementImporter;
 use App\Repository\BudgetRepository;
 use App\Repository\DetectionMaskRepository;
+use App\Sync\Importer\MovementImporter;
 use Exception;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,15 +68,15 @@ class BudgetController extends AbstractController
             $budget = $budgetRepository->find($budgetId) ?? throw new \InvalidArgumentException('Budget not found');// move the file to a temporary location
             //        $importName = random_int(1000,9999).'-'.$file->getClientOriginalName();
             $importName = $budget->getId() . '-' . $file->getClientOriginalName();
-            if (file_exists($importer->getImportBasePath() . '/' . $importName)) {
+            if (file_exists($importer->getBasePath() . '/' . $importName)) {
                 if ($overwrite) {
-                    unlink($importer->getImportBasePath() . '/' . $importName);
+                    unlink($importer->getBasePath() . '/' . $importName);
                 } else {
                     throw new \InvalidArgumentException('File already exists. use overwrite=true to overwrite it.');
                 }
             }
             $movedFile = $file->move(
-                $importer->getImportBasePath(),
+                $importer->getBasePath(),
                 $importName
             );
 

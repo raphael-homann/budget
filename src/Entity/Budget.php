@@ -48,6 +48,9 @@ class Budget extends AbstractSynergyBudgetEntity
     #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'budget', orphanRemoval: true)]
     private Collection $movements;
 
+    #[ORM\Column(length: 255)]
+    private ?string $color = null;
+
     public function __construct()
     {
         $this->envelopes = new ArrayCollection();
@@ -190,6 +193,18 @@ class Budget extends AbstractSynergyBudgetEntity
                 $movement->setBudget(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(string $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }

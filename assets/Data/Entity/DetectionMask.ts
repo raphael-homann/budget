@@ -13,6 +13,7 @@ export default class DetectionMask extends Entity  {
     public name: string = '';
     private _budgetId: string | null = null;
     private _budget: Budget | null = null;
+    public detectionType: string | null = null;
     // ---properties---  ! keep this line
 
     public get categoryId(): string | null {

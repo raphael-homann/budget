@@ -12,28 +12,14 @@
     <v-card-text>
 
       <!--mask-->
-      <v-text-field  v-model="detectionMask.mask"
-                    :label="t('budget.entities.DetectionMask.fields.mask')" required>
-      </v-text-field>
+      <v-textarea v-model="detectionMask.mask"
+                  :label="t('budget.entities.DetectionMask.fields.mask')" required>
+      </v-textarea>
 
-      <!--score-->
-      <v-text-field type="number" v-model.number="detectionMask.score"
-                    :label="t('budget.entities.DetectionMask.fields.score')" required>
-      </v-text-field>
-
-      <!--active-->
-      <v-checkbox v-model="detectionMask.active"
-                    :label="t('budget.entities.DetectionMask.fields.active')" required>
-      </v-checkbox>
-
-      <!--name-->
-      <v-text-field  v-model="detectionMask.name"
-                    :label="t('budget.entities.DetectionMask.fields.name')" required>
-      </v-text-field>
 
       <!-- category -->
       <v-row justify="end" v-if="categoryRepository">
-        <v-col cols="8">
+        <v-col cols="10">
           <v-autocomplete
               :items="categoryRepository.getItems()"
               item-title="name"
@@ -43,19 +29,42 @@
               required
           ></v-autocomplete>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="2">
           <v-btn icon='mdi-plus-thick' @click="categoryModal=new Category()" variant="tonal" color="primary"
                  size="small"></v-btn>
           <v-btn v-if="detectionMask.category" icon='mdi-pencil' @click="editCategory" variant="tonal"
                  color="secondary" size="small"></v-btn>
         </v-col>
       </v-row>
+
+      <!--score-->
+      <v-text-field type="number" v-model.number="detectionMask.score"
+                    :label="t('budget.entities.DetectionMask.fields.score')" required>
+      </v-text-field>
+
+      <!--detectionType-->
+      <v-select
+          :items="detectionTypes"
+          item-title="name"
+          item-value="id"
+          v-model="detectionMask.detectionType"
+          :label="t('budget.entities.DetectionMask.fields.detectionType')"
+          required
+      ></v-select>
+
+
+      <!--active-->
+      <v-checkbox v-model="detectionMask.active"
+                  :label="t('budget.entities.DetectionMask.fields.active')" required>
+      </v-checkbox>
+
     </v-card-text>
 
     <v-card-actions>
       <v-container>
         <v-row justify="end">
-          <v-btn v-if="detectionMask.getId()" prepend-icon="mdi-play" color="success" @click="$emit('play')">Exécuter</v-btn>
+          <v-btn v-if="detectionMask.getId()" prepend-icon="mdi-play" color="success" @click="$emit('play')">Exécuter
+          </v-btn>
           <v-btn prepend-icon="mdi-close" color="grey" @click="close()">Fermer</v-btn>
           <v-btn prepend-icon="mdi-check" color="primary" @click="save()">Enregistrer</v-btn>
         </v-row>
@@ -78,7 +87,11 @@ import BgCategoryEditForm from "./BgCategoryEditForm.vue";
 
 const categoryModal: Ref<Category | null> = ref(null);
 let categoryRepository: Repository<Category> | null = null;
-
+const detectionTypes = [
+  {id: 'regex', name: 'Expression régulière'},
+  {id: 'contains', name: 'Contient'},
+  {id: 'wildcard', name: 'Joker (*)'},
+]
 const props = defineProps({
   entityManager: {
     type: EntityManager,
@@ -90,7 +103,7 @@ const props = defineProps({
   }
 })
 const {t} = useLocale()
-const emit = defineEmits(['close', 'save','play']);
+const emit = defineEmits(['close', 'save', 'play']);
 
 function close() {
   emit('close')
